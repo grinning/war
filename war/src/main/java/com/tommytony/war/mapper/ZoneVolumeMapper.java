@@ -24,6 +24,9 @@ import org.bukkit.inventory.ItemStack;
 
 
 import com.tommytony.war.War;
+import com.tommytony.war.Warzone;
+import com.tommytony.war.config.WarzoneConfig;
+import com.tommytony.war.config.WarzoneConfigBag;
 import com.tommytony.war.job.DeferredBlockResetsJob;
 import com.tommytony.war.job.ZoneVolumeSaveJob;
 import com.tommytony.war.utility.DeferredBlockReset;
@@ -38,6 +41,8 @@ import com.tommytony.war.volume.ZoneVolume;
  */
 public class ZoneVolumeMapper {
 
+	private static int maxTnt = 0;
+	private static Warzone warzone;
 	/**
 	 * Loads the given volume
 	 *
@@ -268,12 +273,21 @@ public class ZoneVolumeMapper {
 	 * @return integer Number of written blocks
 	 */
 	public static int save(Volume volume, String zoneName) {
+		int tntCount = 0;
 		int noOfSavedBlocks = 0;
 		if (volume.hasTwoCorners()) {
 			BufferedWriter cornersWriter = null;
 			FileOutputStream blocksOutput = null;
 			BufferedWriter signsWriter = null;
 			BufferedWriter invsWriter = null;
+			boolean limit;
+			Warzone zone = warzone.getZoneByName(zoneName);
+			WarzoneConfigBag config = zone.getWarzoneConfig();
+			maxTnt = config.getInt(WarzoneConfig.MAXTNT);
+			if(maxTnt == 0)
+				limit = false;
+			else
+				limit = true;
 			try {
 				(new File(War.war.getDataFolder().getPath() + "/dat/warzone-" + zoneName)).mkdir();
 				String path = War.war.getDataFolder().getPath() + "/dat/warzone-" + zoneName + "/volume-" + volume.getName();
@@ -318,6 +332,12 @@ public class ZoneVolumeMapper {
 								typeId = block.getTypeId();
 								data = block.getData();
 								state = block.getState();
+								
+								if (typeId <= maxTnt) {
+									tntCount++;
+								} else if (typeId > maxTnt) {
+									continue;
+								}
 
 								blocksOutput.write((byte) typeId);
 								blocksOutput.write(data);
@@ -347,7 +367,8 @@ public class ZoneVolumeMapper {
 									List<ItemStack> items = VolumeMapper.getItemListFromInv(inv);
 									invsWriter.write(VolumeMapper.buildInventoryStringFromItemList(items));
 									invsWriter.newLine();
-								}
+								} 
+								
 								noOfSavedBlocks++;
 							} catch (Exception e) {
 								War.war.log("Unexpected error while saving a block to " + " file for zone " + zoneName + ". Blocks saved so far: " + noOfSavedBlocks + "Position: x:" + x + " y:" + y + " z:" + z + ". " + e.getClass().getName() + " " + e.getMessage(), Level.WARNING);
