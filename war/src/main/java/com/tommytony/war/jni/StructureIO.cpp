@@ -10,8 +10,6 @@
 JNIEXPORT void JNICALL Java_com_tommytony_war_jni_StructureIO_callJavaMethod (JNIEnv * env,
         jobject obj, jstring path, jstring sep)
 {
-    //I know the path is 22 characters, I will use a 28 byte buffer just in case
-    string absolutePath, fileSep;
     
     jclass StructureIO = env->GetObjectClass(obj);
     jmethodID method = env->GetMethodID(StructureIO, "makeFiles", "()V");
@@ -98,6 +96,7 @@ JNIEXPORT void JNICALL Java_com_tommytony_war_jni_StructureIO_callJavaMethod (JN
     cakeStream.open(pathCakeDir + sep + "alt.dat");
     cakeStream << "cake" << std::endl;
     cakeStream.close();
+    //more needs to be added like complete file data writing.
 }
 
 
