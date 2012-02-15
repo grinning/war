@@ -37,6 +37,7 @@ import com.tommytony.war.event.WarPlayerListener;
 import com.tommytony.war.event.WarServerListener;
 import com.tommytony.war.job.HelmetProtectionTask;
 import com.tommytony.war.job.SpoutFadeOutMessageJob;
+import com.tommytony.war.mapper.PlayerStructureMapper;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.spout.SpoutDisplayer;
@@ -48,7 +49,7 @@ import com.tommytony.war.utility.PlayerState;
 /**
  * Main class of War
  *
- * @author tommytony, Tim Düsterhus
+ * @author tommytony, Tim Düsterhus, grinning
  * @package bukkit.tommytony.war
  */
 public class War extends JavaPlugin {
@@ -77,6 +78,7 @@ public class War extends JavaPlugin {
 	private final List<String> zoneMakersImpersonatingPlayers = new ArrayList<String>();
 	private HashMap<String, PlayerState> disconnected = new HashMap<String, PlayerState>();
 	private final HashMap<String, String> wandBearers = new HashMap<String, String>(); // playername to zonename
+	private HashMap<String, PlayerStructureMapper> structureSavers = new HashMap<String, PlayerStructureMapper>();
 
 	private final List<String> deadlyAdjectives = new ArrayList<String>();
 	private final List<String> killerVerbs = new ArrayList<String>();
@@ -185,9 +187,9 @@ public class War extends JavaPlugin {
 		ItemStack arrows = new ItemStack(Material.ARROW, 7);
 		defaultLoadout.put(2, arrows);
 		
-		ItemStack stonePick = new ItemStack(Material.IRON_PICKAXE, 1, (byte) 8);
-		stonePick.setDurability((short) 8);
-		defaultLoadout.put(3, stonePick);
+		ItemStack ironPick = new ItemStack(Material.IRON_PICKAXE, 1, (byte) 8); //fail?
+		ironPick.setDurability((short) 8);
+		defaultLoadout.put(3, ironPick);
 		
 		ItemStack stoneSpade = new ItemStack(Material.STONE_SPADE, 1, (byte) 8);
 		stoneSword.setDurability((short) 8);
