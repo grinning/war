@@ -78,7 +78,7 @@ public class War extends JavaPlugin {
 	private final List<String> zoneMakersImpersonatingPlayers = new ArrayList<String>();
 	private HashMap<String, PlayerState> disconnected = new HashMap<String, PlayerState>();
 	private final HashMap<String, String> wandBearers = new HashMap<String, String>(); // playername to zonename
-	private HashMap<String, PlayerStructureMapper> structureSavers = new HashMap<String, PlayerStructureMapper>();
+	private Map<String, PlayerStructureMapper> structureSavers = new HashMap<String, PlayerStructureMapper>();
 
 	private final List<String> deadlyAdjectives = new ArrayList<String>();
 	private final List<String> killerVerbs = new ArrayList<String>();
@@ -258,6 +258,8 @@ public class War extends JavaPlugin {
 
 		this.log("War v" + this.desc.getVersion() + " is off.", Level.INFO);
 		this.setLoaded(false);
+		this.structureSavers.clear(); //clear the stuff
+		System.gc();
 	}
 
 	/**
@@ -916,5 +918,29 @@ public class War extends JavaPlugin {
 
 	public SpoutDisplayer getSpoutDisplayer() {
 		return this.spoutMessenger ;
+	}
+	
+	public Map<String, PlayerStructureMapper> getStructureSavers() {
+		return this.structureSavers;
+	}
+	
+	public PlayerStructureMapper getStructureMaker(String name) {
+		return this.structureSavers.get(name);
+	}
+	
+	public void addStructureMaker(String name, PlayerStructureMapper structureMapper) {
+		this.structureSavers.put(name, structureMapper);
+	}
+	
+	public void removeStructureMaker(String name) {
+		this.structureSavers.remove(name);
+	}
+	
+	@Override
+	public void finalize() { //@author grinning   purpose is to make sure that things taking up memory space shall be killed
+		this.structureSavers.clear(); //no need to let anything hold memory to a dying object in
+		this.warzones.clear();         //the garbage collection
+		this.zoneMakerNames.clear();
+		this.zoneMakersImpersonatingPlayers.clear();
 	}
 }
