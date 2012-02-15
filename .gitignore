@@ -12,3 +12,7 @@
 bin
 */lib/*
 */target/*
+/war/src/main/java/com/tommytony/war/jni/JNI_War/nbproject/private/
+/war/src/main/java/com/tommytony/war/JNI_War/nbproject/private/
+/war/src/main/java/com/tommytony/war/jni/nbproject/private/
+/war/src/main/java/com/tommytony/war/jni/
