@@ -12,7 +12,7 @@ JNIEXPORT void JNICALL Java_com_tommytony_war_jni_StructureIO_callJavaMethod (JN
 {
     
     jclass StructureIO = env->GetObjectClass(obj);
-    jmethodID method = env->GetMethodID(StructureIO, "makeFiles", "()V");
+    jmethodID method = env->GetMethodID(StructureIO, "makeFiles", "(Ljava/lang/String; Ljava/lang/String;)V");
     env->CallVoidMethod(obj, method);
     
     std::ofstream spawnStream;
