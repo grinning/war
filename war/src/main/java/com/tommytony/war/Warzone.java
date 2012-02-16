@@ -38,6 +38,7 @@ import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.Monument;
+import com.tommytony.war.structure.Resupply;
 import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.structure.ZoneWallGuard;
 import com.tommytony.war.utility.LoadoutSelection;
@@ -56,6 +57,7 @@ public class Warzone {
 	private World world;
 	private final List<Team> teams = new ArrayList<Team>();
 	private final List<Monument> monuments = new ArrayList<Monument>();
+	private final List<Resupply> resupply = new ArrayList<Resupply>();
 	private final List<Bomb> bombs = new ArrayList<Bomb>();
 	private final List<Cake> cakes = new ArrayList<Cake>();
 	private Location teleport;
@@ -572,6 +574,13 @@ public class Warzone {
 			}
 		}
 		return null;
+	}
+	
+	public boolean hasResupply(String name) {
+		for(Resupply resupply: this.resupply) {
+			if(resupply.getName().startsWith(name))
+				return true;
+		} return false;
 	}
 
 	public boolean isImportantBlock(Block block) {
@@ -1312,5 +1321,9 @@ public class Warzone {
 
 	public List<String> getReallyDeadFighters() {
 		return this.reallyDeadFighters ;
+	}
+	
+	public List<Resupply> getResupply() {
+		return this.resupply;
 	}
 }
