@@ -27,6 +27,22 @@ public class Resupply {
 		this.setLocation(location);
 	}
 	
+	public String getName() {
+		return this.name;
+	}
+	
+	public Warzone getWarzone() {
+		return this.warzone;
+	}
+	
+	public Location getLocation() {
+		return this.location;
+	}
+	
+	public Volume getVolume() {
+		return this.volume;
+	}
+	
 	public void setLocation(Location location) {
 		Block locationBlock = this.warzone.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		this.volume.setCornerOne(locationBlock.getRelative(BlockFace.DOWN).getRelative(BlockFace.EAST, 2).getRelative(BlockFace.SOUTH, 2));
