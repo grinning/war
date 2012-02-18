@@ -593,6 +593,13 @@ public class Warzone {
 				return true;
 		} return false;
 	}
+	
+	public Resupply getResupply(String name) {
+		for(Resupply resupply : this.resupply) {
+			if(resupply.getName().startsWith(name))
+				return resupply;
+		} return null;
+	}
 
 	public boolean isImportantBlock(Block block) {
 		if (this.ready()) {
@@ -615,6 +622,11 @@ public class Warzone {
 				if (t.getSpawnVolume().contains(block)) {
 					return true;
 				} else if (t.getFlagVolume() != null && t.getFlagVolume().contains(block)) {
+					return true;
+				}
+			}
+			for(Resupply r : this.resupply) {
+				if(r.getVolume().contains(block)) {
 					return true;
 				}
 			}
