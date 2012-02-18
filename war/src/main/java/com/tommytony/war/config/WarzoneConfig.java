@@ -19,7 +19,8 @@ public enum WarzoneConfig {
 	RESETONLOAD (Boolean.class),
 	RESETONUNLOAD (Boolean.class),
 	UNBREAKABLE (Boolean.class),
-	MAXTNT(Integer.class);
+	MAXTNT(Integer.class),
+	PREPTIME(Integer.class);
 	
 	
 	private final Class<?> configType;

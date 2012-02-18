@@ -279,6 +279,7 @@ public class Warzone {
 			this.lobby.initialize();
 		}
 
+		//clear list from previous battles
 		this.flagThieves.clear();
 		this.bombThieves.clear();
 		this.cakeThieves.clear();
@@ -435,6 +436,15 @@ public class Warzone {
 		}
 		return false;
 	}
+	
+	public boolean nearAnyResupply(Location lo) {
+		for(Resupply resupply : this.resupply) {
+			if(resupply.isNear(lo)) {
+				return true;
+			}
+		} 
+		return false;
+	}
 
 	public List<Monument> getMonuments() {
 		return this.monuments;
@@ -578,6 +588,7 @@ public class Warzone {
 	
 	public boolean hasResupply(String name) {
 		for(Resupply resupply: this.resupply) {
+		for(Resupply resupply : this.resupply) {
 			if(resupply.getName().startsWith(name))
 				return true;
 		} return false;

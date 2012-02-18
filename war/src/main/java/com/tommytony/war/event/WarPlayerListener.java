@@ -499,6 +499,13 @@ public class WarPlayerListener implements Listener {
 				War.war.msg(player, "Your dance pleases the monument's voodoo. You gain " + heartNum + "heart" + isS + "!");
 				return;
 			}
+			
+			//Resupplies
+			if(playerTeam != null && playerWarzone.nearAnyResupply(playerLoc)) {
+				PlayerInventory pInv = player.getInventory();
+				ItemStack[] items = pInv.getContents();
+				
+			}
 
 			// Flag capture
 			if (playerWarzone.isFlagThief(player.getName())) {
