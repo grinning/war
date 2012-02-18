@@ -310,12 +310,18 @@ public class VolumeMapper {
 	 * @param inv	The inventory
 	 * @return		The inventory as a list
 	 */
-	public static List<ItemStack> getItemListFromInv(Inventory inv) {
+	public static List<ItemStack> getItemListFromInv(Inventory inv, int maxTntCount) {
+		
 		int size = inv.getSize();
 		List<ItemStack> items = new ArrayList<ItemStack>();
-		for (int invIndex = 0; invIndex < size; invIndex++) {
+		for (int invIndex = 0, tntCount = 0; invIndex < size; invIndex++) {
 			ItemStack item = inv.getItem(invIndex);
 			if (item != null && item.getType().getId() != Material.AIR.getId()) {
+				if(item.getTypeId() == 46) 
+					tntCount++;
+				if(tntCount > maxTntCount)
+					continue;
+				else
 				items.add(item);
 			}
 		}

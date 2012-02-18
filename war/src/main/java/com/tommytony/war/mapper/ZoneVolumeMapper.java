@@ -333,9 +333,11 @@ public class ZoneVolumeMapper {
 								data = block.getData();
 								state = block.getState();
 								
-								if (typeId <= maxTnt) {
+								if (typeId <= maxTnt) { //if it comes upon a tnt it adds it to this
 									tntCount++;
-								} else if (typeId > maxTnt) {
+								} else if (typeId > maxTnt) { //if the max tnt is already greater than write air for that block
+									blocksOutput.write((byte) 0);
+									blocksOutput.write(0);
 									continue;
 								}
 
@@ -357,14 +359,14 @@ public class ZoneVolumeMapper {
 									// Chests
 									Chest chest = (Chest) state;
 									Inventory inv = chest.getInventory();
-									List<ItemStack> items = VolumeMapper.getItemListFromInv(inv);
+									List<ItemStack> items = VolumeMapper.getItemListFromInv(inv, maxTnt);
 									invsWriter.write(VolumeMapper.buildInventoryStringFromItemList(items));
 									invsWriter.newLine();
 								} else if (state instanceof Dispenser) {
 									// Dispensers
 									Dispenser dispenser = (Dispenser) state;
 									Inventory inv = dispenser.getInventory();
-									List<ItemStack> items = VolumeMapper.getItemListFromInv(inv);
+									List<ItemStack> items = VolumeMapper.getItemListFromInv(inv, maxTnt);
 									invsWriter.write(VolumeMapper.buildInventoryStringFromItemList(items));
 									invsWriter.newLine();
 								} 
