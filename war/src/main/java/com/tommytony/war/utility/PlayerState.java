@@ -114,5 +114,15 @@ public class PlayerState {
 	public int getLevel() {
 		return level;
 	}
+	
+	@Override
+	public void finalize() {
+		this.contents = null;
+		this.helmet = null;
+		this.chest = null;
+		this.legs = null;
+		this.feet = null;
+		this.potionEffects.clear();
+	}
 
 }
