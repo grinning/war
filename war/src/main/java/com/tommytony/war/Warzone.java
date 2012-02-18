@@ -587,7 +587,6 @@ public class Warzone {
 	}
 	
 	public boolean hasResupply(String name) {
-		for(Resupply resupply: this.resupply) {
 		for(Resupply resupply : this.resupply) {
 			if(resupply.getName().startsWith(name))
 				return true;
@@ -1258,6 +1257,8 @@ public class Warzone {
 			this.getVolume().resetBlocks();
 		}
 		this.getVolume().finalize();
+		this.finalize();
+		System.gc();
 	}
 
 	public boolean isEnoughPlayers() {
@@ -1348,5 +1349,31 @@ public class Warzone {
 	
 	public List<Resupply> getResupply() {
 		return this.resupply;
+	}
+	
+	@Override
+	public void finalize() {
+		this.name = null;
+		this.volume = null;
+		this.world = null;
+		this.teams.clear();
+		this.monuments.clear();
+		this.resupply.clear();
+		this.bombs.clear();
+		this.cakes.clear();
+		this.teleport = null;
+		this.lobby = null;
+		this.rallyPoint = null;
+		this.authors.clear();
+		this.zoneWallGuards.clear();
+		this.playerStates.clear();
+		this.flagThieves.clear();
+		this.bombThieves.clear();
+		this.cakeThieves.clear();
+		this.loadoutSelections.clear();
+		this.deadMenInventories.clear();
+		this.respawn.clear();
+		this.reallyDeadFighters.clear();
+		this.defaultInventories = null;
 	}
 }
