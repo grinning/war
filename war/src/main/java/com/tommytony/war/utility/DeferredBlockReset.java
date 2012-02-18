@@ -84,4 +84,11 @@ public class DeferredBlockReset {
 	public Byte getRawNote() {
 		return rawNote;
 	}
+	
+	@Override
+	public void finalize() {
+		this.lines = null;
+		this.items.clear();
+		this.rawNote = null;
+	}
 }
