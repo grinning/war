@@ -222,4 +222,14 @@ public class ZoneWallGuard {
 	public BlockFace getWall() {
 		return this.wall;
 	}
+	
+	@Override
+	public void finalize() {
+		this.player = null;
+		this.warzone.finalize();
+		this.warzone = null;
+		this.playerLocation = null;
+		this.wall = null;
+		this.glassified.clear();
+	}
 }

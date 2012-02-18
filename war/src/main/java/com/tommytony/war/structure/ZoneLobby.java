@@ -709,4 +709,16 @@ public class ZoneLobby {
 
 		return false;
 	}
+	
+	@Override
+	public void finalize() {
+		this.wall = null;
+		this.volume.finalize();
+		this.volume = null;
+		this.lobbyMiddleWallBlock = null;
+		this.warHubLinkGate = null;
+		this.teamGateBlocks.clear();
+		this.autoAssignGate = null;
+		this.zoneTeleportBlock = null;
+	}
 }

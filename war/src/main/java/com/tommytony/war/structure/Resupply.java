@@ -84,4 +84,13 @@ public class Resupply {
 		return false; //some methods are pasted
 		//eclipse is going crazy... thinks this thing is filled with errors
 	}
+	
+	@Override
+	public void finalize() {
+		this.warzone.finalize();
+		this.warzone = null;
+		this.location = null;
+		this.volume.finalize();
+		this.volume = null;
+	}
 }

@@ -109,4 +109,14 @@ public class Cake {
 		this.volume = newVolume;
 
 	}
+	
+	@Override
+	public void finalize() {
+		this.location = null;
+		this.volume.finalize();
+		this.volume = null;
+		this.warzone.finalize();
+		this.warzone = null;
+		this.capturer = null;
+	}
 }

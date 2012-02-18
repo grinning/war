@@ -160,4 +160,14 @@ public class Monument {
 
 		return this.ownerTeam;
 	}
+	
+	@Override
+	public void finalize() {
+		this.location = null;
+		this.volume.finalize();
+		this.volume = null;
+		this.ownerTeam = null;
+		this.warzone.finalize();
+		this.warzone = null;
+	}
 }

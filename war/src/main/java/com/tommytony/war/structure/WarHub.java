@@ -261,5 +261,14 @@ public class WarHub {
 	public BlockFace getOrientation() {
 		return this.orientation;
 	}
+	
+	@Override
+	public void finalize() {
+		this.location = null;
+		this.volume.finalize();
+		this.volume = null;
+		this.zoneGateBlocks.clear();
+		this.orientation = null;
+	}
 
 }
