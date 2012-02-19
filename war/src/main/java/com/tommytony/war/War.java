@@ -1,5 +1,6 @@
 package com.tommytony.war;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,6 +238,11 @@ public class War extends JavaPlugin {
 			SpoutFadeOutMessageJob fadeOutMessagesTask = new SpoutFadeOutMessageJob();
 			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, fadeOutMessagesTask, 100, 100);
 		}
+		
+		//Make stats directory
+		char sep = File.separatorChar;
+		File statsDir = new File("plugins" + sep + "war" + sep + "stats");
+		statsDir.mkdir();
 				
 		this.log("War v" + this.desc.getVersion() + " is on.", Level.INFO);
 	}

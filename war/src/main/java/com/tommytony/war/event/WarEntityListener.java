@@ -437,6 +437,9 @@ public class WarEntityListener implements Listener {
 					if (player.getHealth() != 0) {
 						player.setHealth(0);
 					}
+					/*Dinosaur*/
+					
+					
 					return;
 				}
 				

@@ -1,9 +1,15 @@
 package com.tommytony.war.event;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -20,6 +26,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerInventoryEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -780,6 +787,31 @@ public class WarPlayerListener implements Listener {
 						}
 					}
 					break;
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		if(War.war.isLoaded()) {
+			//register their file if it doesn't already exist!
+			String name = event.getPlayer().getDisplayName();
+			char sep = File.separatorChar;
+			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + name + ".stat");
+			if(!file.exists()) {
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					Bukkit.getServer().getLogger().log(Level.INFO,"War> Your Computer is stupid!");
+					e.printStackTrace();
+				}
+				try {
+					Formatter format = new Formatter(file);
+					format.format("Kills:%i Deaths:%i", 0, 0);
+				} catch (FileNotFoundException e) {
+					Bukkit.getServer().getLogger().log(Level.INFO,"War> Your Computer is stupid!");
+					e.printStackTrace();
 				}
 			}
 		}
