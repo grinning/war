@@ -1,13 +1,16 @@
 package com.tommytony.war;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -267,7 +270,21 @@ public class War extends JavaPlugin {
 
 		this.log("War v" + this.desc.getVersion() + " is off.", Level.INFO);
 		this.setLoaded(false);
-		this.structureSavers.clear(); //clear the stuff
+		Player[] players = Bukkit.getServer().getOnlinePlayers();
+		
+		for(Player player : players) { //save all the stats
+			PlayerStat stats = this.getPlayerStats(player.getDisplayName());
+			char sep = File.separatorChar;
+			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + player.getDisplayName() + ".stat");
+			try {
+				Formatter writer = new Formatter(file);
+				writer.format("%i%i", stats.getKills(), stats.getDeaths());
+				writer.close();
+			} catch (FileNotFoundException e) {
+				Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid!");
+				e.printStackTrace();
+			}
+		}
 		System.gc();
 	}
 
