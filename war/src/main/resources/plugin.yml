@@ -84,6 +84,11 @@ commands:
     description: War> Team chat.
     usage: Team chat.
         Ex - /team <message>
+  wstats:
+    description: War> Get someone's war stats.
+    usage: Get stats.
+        Ex - /warstats <player> or /wstats <player>
+    aliases: warstats
 # Warzone maker commands (must have the 'war.zonemaker' permission or be added as a zone-maker in /plugins/War/war.txt)
 # Battle-related commands
   nextbattle:

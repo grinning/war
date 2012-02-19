@@ -119,6 +119,8 @@ public class WarCommandHandler {
 				commandObj = new SetWarConfigCommand(this, sender, arguments);
 			} else if (command.equals("zonemaker") || command.equals("zm")) {
 				commandObj = new ZoneMakerCommand(this, sender, arguments);
+			} else if (command.equals("warstats") || command.equals("wstats")) {
+				commandObj = new GetStatsCommand(this, sender, arguments);
 			}
 			// we are not responsible for any other command
 		} catch (NotWarAdminException e) {
