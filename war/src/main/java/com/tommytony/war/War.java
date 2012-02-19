@@ -45,6 +45,7 @@ import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.utility.ChatFixUtil;
+import com.tommytony.war.utility.PlayerStat;
 import com.tommytony.war.utility.PlayerState;
 
 /**
@@ -80,6 +81,7 @@ public class War extends JavaPlugin {
 	private HashMap<String, PlayerState> disconnected = new HashMap<String, PlayerState>();
 	private final HashMap<String, String> wandBearers = new HashMap<String, String>(); // playername to zonename
 	private Map<String, PlayerStructureMapper> structureSavers = new HashMap<String, PlayerStructureMapper>();
+	private Map<String, PlayerStat> playerStats = new HashMap<String, PlayerStat>();
 
 	private final List<String> deadlyAdjectives = new ArrayList<String>();
 	private final List<String> killerVerbs = new ArrayList<String>();
@@ -943,11 +945,28 @@ public class War extends JavaPlugin {
 		this.structureSavers.remove(name);
 	}
 	
+	public Map<String, PlayerStat> getPlayerStats() {
+		return this.playerStats;
+	}
+	
+	public PlayerStat getPlayerStats(String name) {
+		return this.playerStats.get(name);
+	}
+	
+	public void addPlayerStat(String name, PlayerStat stats) {
+		this.playerStats.put(name, stats);
+	}
+	
+	public void removePlayerStat(String name) {
+		this.playerStats.remove(name);
+	}
+	
 	@Override
 	public void finalize() { //@author grinning   purpose is to make sure that things taking up memory space shall be killed
 		this.structureSavers.clear(); //no need to let anything hold memory to a dying object in
 		this.warzones.clear();         //the garbage collection
 		this.zoneMakerNames.clear();
 		this.zoneMakersImpersonatingPlayers.clear();
+		this.playerStats.clear();
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -52,6 +53,7 @@ import com.tommytony.war.structure.Cake;
 import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.utility.LoadoutSelection;
+import com.tommytony.war.utility.PlayerStat;
 
 /**
  * @author tommytony, Tim Düsterhus
@@ -78,6 +80,19 @@ public class WarPlayerListener implements Listener {
 			if (War.war.isWandBearer(player)) {
 				War.war.removeWandBearer(player);
 			}
+			//now we have to save their stats to their files durr tommytony durr -grinning
+			PlayerStat stats = War.war.getPlayerStats(event.getPlayer().getDisplayName());
+			char sep = File.separatorChar;
+			
+			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
+			try {
+				Formatter writer = new Formatter(file);
+				writer.format("%i%i", stats.getKills(), stats.getDeaths()); //now we write em
+				writer.close();
+			} catch (FileNotFoundException e) {
+				Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid!");
+				e.printStackTrace(); //seriously though bro, your computer is stupid!
+			} 
 		}
 	}
 
@@ -233,8 +248,23 @@ public class WarPlayerListener implements Listener {
 				if (inWarzone || inLobby || inWarhub) {
 					event.setCancelled(true);
 					War.war.log("Prevented " + player.getName() + " from getting kicked.", java.util.logging.Level.WARNING);
+				} else {
+					//so if war isn't going to prevent them from getting kicked, save their stats!
+					PlayerStat stats = War.war.getPlayerStats(event.getPlayer().getDisplayName());
+					char sep = File.separatorChar;
+					
+					File file = new File("plugins" + sep + "war" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
+					try {
+						Formatter writer = new Formatter(file);
+						writer.format("%i%i", stats.getKills(), stats.getDeaths()); //now we write em
+						writer.close();
+					} catch (FileNotFoundException e) {
+						Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid!");
+						e.printStackTrace(); //seriously though bro, your computer is stupid!
+					} 
 				}
 			}
+			
 		}
 	}
 
@@ -795,10 +825,12 @@ public class WarPlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if(War.war.isLoaded()) {
+			
 			//register their file if it doesn't already exist!
 			String name = event.getPlayer().getDisplayName();
 			char sep = File.separatorChar;
 			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + name + ".stat");
+			
 			if(!file.exists()) {
 				try {
 					file.createNewFile();
@@ -808,12 +840,37 @@ public class WarPlayerListener implements Listener {
 				}
 				try {
 					Formatter format = new Formatter(file);
-					format.format("Kills:%i Deaths:%i", 0, 0);
+					format.format("%i%i", 0, 0);
 				} catch (FileNotFoundException e) {
 					Bukkit.getServer().getLogger().log(Level.INFO,"War> Your Computer is stupid!");
 					e.printStackTrace();
 				}
+				
+				PlayerStat stats = new PlayerStat(name, 0, 0);
+				War.war.addPlayerStat(name, stats); //add a new player object to our list :)
+			
+			} else { //if the file does exist, we need to create a new profile from the data in the file
+				int kills = 0;
+				int deaths = 0;
+				try {
+					Scanner read = new Scanner(file);
+					
+					while(read.hasNext()) {
+						kills = read.nextInt(); //retrieve their stats
+						deaths = read.nextInt();
+					}
+					
+					read.close();
+					
+				} catch (FileNotFoundException e) {
+					Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid!");				
+					e.printStackTrace();
+				}
+				
+				PlayerStat stats = new PlayerStat(name, kills, deaths); //add 'em to our list :)
+				War.war.addPlayerStat(name, stats);
 			}
+			
 		}
 	}
 	
@@ -837,6 +894,5 @@ public class WarPlayerListener implements Listener {
 			}
 		}
 	}
-	
 	
 }

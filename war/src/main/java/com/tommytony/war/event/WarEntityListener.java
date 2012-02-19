@@ -45,6 +45,7 @@ import com.tommytony.war.job.DeferredBlockResetsJob;
 import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.utility.DeferredBlockReset;
+import com.tommytony.war.utility.PlayerStat;
 
 /**
  * Handles Entity-Events
@@ -568,6 +569,13 @@ public class WarEntityListener implements Listener {
 		Player player = (Player) event.getEntity();
 		Warzone zone = Warzone.getZoneByPlayerName(player.getName());
 		if (zone != null) {
+			//ok now we need to update the deaths for each player
+			PlayerStat personWhoDied = War.war.getPlayerStats(player.getDisplayName());
+			personWhoDied.incDeaths();
+			PlayerStat personWhoKilled = War.war.getPlayerStats(player.getKiller().getDisplayName());
+			personWhoKilled.incKills();
+			//see updated this stuff so ya :)
+			
 			event.getDrops().clear();
 			if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
 				// catch the odd death that gets away from us when usually intercepting and preventing deaths
