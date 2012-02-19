@@ -50,7 +50,7 @@ JNIEXPORT void JNICALL Java_com_tommytony_war_jni_StructureIO_callJavaMethod (JN
     
     spawnStream.open(pathSpawnDir + sep + "tiny.dat");
     spawnStream << "1;1;1;0;"  << std::endl;
-    spawnStream << "35,0" << std::endl;
+    spawnStream << "35,0;" << std::endl;
     spawnStream.close()
     
     spawnStream.open(pathSpawnDir + sep + "small.dat");
