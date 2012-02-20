@@ -15,13 +15,13 @@ import org.bukkit.entity.Player;
 
 public class StructureMapper {
 
-	private String sep = System.getProperty("path.separator");
+	private static String sep = System.getProperty("path.separator");
 	
 	public StructureMapper() {
 		super();
 	}
 	
-	public void save(String type, String name, Player p, Location pos1, Location pos2) {
+	public static void save(String type, String name, Player p, Location pos1, Location pos2) {
 		
 		File file = new File("plugins" + sep + "war" + sep + "structures" + sep + type + sep + name + ".sdat"); //.sdat = structure data
 	
@@ -68,7 +68,7 @@ public class StructureMapper {
 	    }
 	}
 	
-	public void load(String type, String name, Player p) {
+	public static void load(String type, String name, Player p) {
 		File file = new File("plugins" + sep + "war" + sep + "structures" + sep + type + sep + name + ".sdat");
 		
 		if(!file.exists()) {

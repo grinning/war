@@ -47,6 +47,7 @@ import com.tommytony.war.command.ZoneSetter;
 import com.tommytony.war.config.FlagReturn;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.WarzoneConfig;
+import com.tommytony.war.mapper.PlayerStructureMapper;
 import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.structure.Cake;
@@ -77,6 +78,10 @@ public class WarPlayerListener implements Listener {
 				zone.handlePlayerLeave(player, zone.getTeleport(), true);
 			}
 
+			if(War.war.isWarAdmin(player)) {
+				War.war.removeStructureMaker(player.getDisplayName());
+			}
+			
 			if (War.war.isWandBearer(player)) {
 				War.war.removeWandBearer(player);
 			}
@@ -871,6 +876,10 @@ public class WarPlayerListener implements Listener {
 				War.war.addPlayerStat(name, stats);
 			}
 			
+			if(War.war.isWarAdmin(event.getPlayer())) {
+				PlayerStructureMapper p = new PlayerStructureMapper(event.getPlayer().getDisplayName());
+				War.war.addStructureMaker(event.getPlayer().getDisplayName(), p);
+			}
 		}
 	}
 	
