@@ -92,7 +92,7 @@ public class WarPlayerListener implements Listener {
 			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
 			try {
 				Formatter writer = new Formatter(file);
-				writer.format("%i%i", stats.getKills(), stats.getDeaths()); //now we write em
+				writer.format("%d %d", stats.getKills(), stats.getDeaths()); //now we write em
 				writer.close();
 			} catch (FileNotFoundException e) {
 				Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid!");
@@ -261,7 +261,7 @@ public class WarPlayerListener implements Listener {
 					File file = new File("plugins" + sep + "war" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
 					try {
 						Formatter writer = new Formatter(file);
-						writer.format("%i%i", stats.getKills(), stats.getDeaths()); //now we write em
+						writer.format("%d %d", stats.getKills(), stats.getDeaths()); //now we write em
 						writer.close();
 					} catch (FileNotFoundException e) {
 						Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid!");
@@ -845,7 +845,7 @@ public class WarPlayerListener implements Listener {
 				}
 				try {
 					Formatter format = new Formatter(file);
-					format.format("%i%i", 0, 0);
+					format.format("%d %d", 0, 0);
 				} catch (FileNotFoundException e) {
 					Bukkit.getServer().getLogger().log(Level.INFO,"War> Your Computer is stupid!");
 					e.printStackTrace();
