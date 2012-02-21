@@ -372,8 +372,13 @@ public class WarBlockListener implements Listener {
 							}
 						}
 						
-						t.teamcast("Prevent " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
+						if(Team.getTeamByPlayerName(player.getDisplayName()).equals(team)) {
+                            t.teamcast("Help " + team.getKind().getColor() + player.getName() + ChatColor.WHITE 
+                            		+ " reach the opposing teams spawn!");
+						} else {
+						    t.teamcast("Prevent " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
 								+ " from reaching your spawn with the bomb!");
+						}
 					}
 
 
@@ -415,6 +420,10 @@ public class WarBlockListener implements Listener {
 							}
 						}
 						
+						if(Team.getTeamByPlayerName(player.getDisplayName()).equals(t)) {
+						t.teamcast("Help " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
+								+ " reach your spawn with the cake!");
+						} else {
 						t.teamcast("Prevent " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
 								+ " from reaching their spawn with the cake!");
 					}
@@ -425,6 +434,7 @@ public class WarBlockListener implements Listener {
 				
 				event.setCancelled(true);
 				return;
+			  }
 			} else if (!warzone.isMonumentCenterBlock(block)) {
 				War.war.badMsg(player, "Can't destroy this.");
 				event.setCancelled(true);
