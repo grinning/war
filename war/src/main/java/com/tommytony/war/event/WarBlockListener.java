@@ -479,3 +479,5 @@ public class WarBlockListener implements Listener {
 		}
 	}
 }
+
+

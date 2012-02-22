@@ -7,6 +7,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -167,7 +168,8 @@ public class War extends JavaPlugin {
 		warzoneDefaultConfig.put(WarzoneConfig.RESETONUNLOAD, false);
 		warzoneDefaultConfig.put(WarzoneConfig.UNBREAKABLE, false);
 		warzoneDefaultConfig.put(WarzoneConfig.DEATHMESSAGES, true);
-		warzoneDefaultConfig.put(WarzoneConfig.MAXTNT, 0);
+		warzoneDefaultConfig.put(WarzoneConfig.MAXTNT, 5);
+		warzoneDefaultConfig.put(WarzoneConfig.PREPTIME, 0);
 		
 		teamDefaultConfig.put(TeamConfig.FLAGMUSTBEHOME, true);
 		teamDefaultConfig.put(TeamConfig.FLAGPOINTSONLY, false);

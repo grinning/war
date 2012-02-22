@@ -103,7 +103,7 @@ public class VolumeMapper {
 											List<ItemStack> items = new ArrayList<ItemStack>();
 											if (blockSplit.length > 2) {
 												items = readInventoryString(blockSplit[2]);
-											}
+											} 
 											volume.getInvBlockContents().put("dispenser-" + i + "-" + j + "-" + k, items);
 										}
 									}
@@ -198,7 +198,7 @@ public class VolumeMapper {
 									if (contents != null) {
 										out.write(buildInventoryStringFromItemList(contents));
 									}
-								}
+								} 
 								out.newLine();
 							} catch (Exception e) {
 								War.war.log("Unexpected error while writing block into volume " + volume.getName() + " file for zone " + zoneName + ". Blocks written so far: " + blockWrites + "Position: x:" + i + " y:" + j + " z:" + k + ". " + e.getClass().getName() + " " + e.getMessage(), Level.WARNING);

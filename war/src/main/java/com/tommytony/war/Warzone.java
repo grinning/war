@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -33,6 +34,7 @@ import com.tommytony.war.config.WarzoneConfigBag;
 import com.tommytony.war.job.InitZoneJob;
 import com.tommytony.war.job.LoadoutResetJob;
 import com.tommytony.war.job.ScoreCapReachedJob;
+import com.tommytony.war.job.ZoneTimeJob;
 import com.tommytony.war.mapper.LoadoutYmlMapper;
 import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.Bomb;
@@ -80,13 +82,15 @@ public class Warzone {
 	private final WarzoneConfigBag warzoneConfig;
 	private final TeamConfigBag teamDefaultConfig;
 	private InventoryBag defaultInventories = new InventoryBag();
-
+    private boolean pvpReady = true;
+    
 	public Warzone(World world, String name) {
 		this.world = world;
 		this.name = name;
 		this.warzoneConfig = new WarzoneConfigBag(this);
 		this.teamDefaultConfig = new TeamConfigBag();	// don't use ctor with Warzone, as this changes config resolution
 		this.volume = new ZoneVolume(name, this.getWorld(), this);
+		this.pvpReady = true;
 	}
 
 	public static Warzone getZoneByName(String name) {
@@ -284,6 +288,15 @@ public class Warzone {
 		this.bombThieves.clear();
 		this.cakeThieves.clear();
 		this.reallyDeadFighters.clear();
+		
+		//get them config (here be crazy grinning's!)
+		int pvpready = warzoneConfig.getInt(WarzoneConfig.PREPTIME);
+		
+		if(pvpready != 0) { //if it is equalz to zeroz then dinosaurs will take over the earth
+			this.pvpReady = false;
+			ZoneTimeJob timer = new ZoneTimeJob(pvpready, this);
+			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(War.war, timer);
+		} 
 
 		// nom drops
 		for(Entity entity : (this.getWorld().getEntities())) {
@@ -1375,5 +1388,13 @@ public class Warzone {
 		this.respawn.clear();
 		this.reallyDeadFighters.clear();
 		this.defaultInventories = null;
+	}
+	
+	public void setPvpReady(boolean ready) {
+		this.pvpReady = ready;
+	}
+	
+	public boolean getPvpReady() {
+		return this.pvpReady;
 	}
 }
