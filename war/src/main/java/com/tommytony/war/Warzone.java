@@ -82,7 +82,7 @@ public class Warzone {
 	private final WarzoneConfigBag warzoneConfig;
 	private final TeamConfigBag teamDefaultConfig;
 	private InventoryBag defaultInventories = new InventoryBag();
-    private boolean pvpReady = true;
+    private volatile boolean pvpReady = true;
     
 	public Warzone(World world, String name) {
 		this.world = world;
@@ -297,6 +297,10 @@ public class Warzone {
 			ZoneTimeJob timer = new ZoneTimeJob(pvpready, this);
 			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(War.war, timer);
 		} 
+		
+		if(warzoneConfig.getBoolean(WarzoneConfig.DOMONLY)) {
+			
+		}
 
 		// nom drops
 		for(Entity entity : (this.getWorld().getEntities())) {

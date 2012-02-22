@@ -5,23 +5,23 @@ public enum WarzoneConfig {
 	BLOCKHEADS (Boolean.class),
 	DEATHMESSAGES (Boolean.class),
 	DISABLED (Boolean.class),
+	DOMONLY (Boolean.class),
 	FRIENDLYFIRE (Boolean.class),
 	GLASSWALLS (Boolean.class),
 	INSTABREAK (Boolean.class),
+	MAXTNT(Integer.class),
 	MINTEAMS (Integer.class),
 	MINPLAYERS (Integer.class),
 	MONUMENTHEAL (Integer.class),
 	NOCREATURES (Boolean.class),
 	NODROPS (Boolean.class),
+	PREPTIME (Integer.class),
 	PVPINZONE (Boolean.class),
 	REALDEATHS (Boolean.class),
 	RESETONEMPTY (Boolean.class),
 	RESETONLOAD (Boolean.class),
 	RESETONUNLOAD (Boolean.class),
-	UNBREAKABLE (Boolean.class),
-	MAXTNT(Integer.class),
-	PREPTIME(Integer.class);
-	
+	UNBREAKABLE (Boolean.class);
 	
 	private final Class<?> configType;
 
