@@ -31,6 +31,7 @@ import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.config.WarzoneConfigBag;
+import com.tommytony.war.job.DominationMonumentTimerJob;
 import com.tommytony.war.job.InitZoneJob;
 import com.tommytony.war.job.LoadoutResetJob;
 import com.tommytony.war.job.ScoreCapReachedJob;
@@ -298,8 +299,9 @@ public class Warzone {
 			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(War.war, timer);
 		} 
 		
-		if(warzoneConfig.getBoolean(WarzoneConfig.DOMONLY)) {
-			
+		if(warzoneConfig.getBoolean(WarzoneConfig.DOMENABLED)) {
+			DominationMonumentTimerJob thread = new DominationMonumentTimerJob(warzoneConfig.getInt(WarzoneConfig.DOMTIME), this);
+			Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(War.war, thread); //we don't need to lift a finger, the thread will repeat itself automatically!
 		}
 
 		// nom drops

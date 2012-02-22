@@ -115,6 +115,11 @@ public class WarEntityListener implements Listener {
 				if(!defenderWarzone.getPvpReady()) {
 					//if the timer is still tickin we gotta handle defense! (there be notchz in virgina) 
 					event.setCancelled(true);
+					War.war.badMsg((Player) attacker, "This zone is currently in the preptime phase! Help your team by preparing for battle!");
+					Player p = (Player) attacker;
+					ItemStack heldItem = p.getItemInHand(); //repair their tools
+					short dura = heldItem.getDurability();
+					heldItem.setDurability(++dura); //Remember to keep pre inc operator, not post!
 					return;
 				}
 				

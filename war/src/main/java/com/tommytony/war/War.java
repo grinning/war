@@ -170,6 +170,8 @@ public class War extends JavaPlugin {
 		warzoneDefaultConfig.put(WarzoneConfig.DEATHMESSAGES, true);
 		warzoneDefaultConfig.put(WarzoneConfig.MAXTNT, 5);
 		warzoneDefaultConfig.put(WarzoneConfig.PREPTIME, 0);
+		warzoneDefaultConfig.put(WarzoneConfig.DOMENABLED, true );
+		warzoneDefaultConfig.put(WarzoneConfig.DOMTIME, 15);
 		
 		teamDefaultConfig.put(TeamConfig.FLAGMUSTBEHOME, true);
 		teamDefaultConfig.put(TeamConfig.FLAGPOINTSONLY, false);
@@ -672,7 +674,7 @@ public class War extends JavaPlugin {
 			sender.sendMessage("War> " + str);
 		}
 	}
-
+	
 	public void badMsg(CommandSender sender, String str) {
 		if (sender instanceof Player) {
 			String out = ChatColor.GRAY + "War> " + ChatColor.RED + this.colorKnownTokens(str, ChatColor.RED) + " ";
