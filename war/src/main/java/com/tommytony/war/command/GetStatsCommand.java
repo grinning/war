@@ -48,7 +48,7 @@ public class GetStatsCommand extends AbstractWarCommand {
 				int kills = 0;
 				int deaths = 0;
 				char sep = File.separatorChar;
-				File file = new File("plugins" + sep + "war" + sep + "stats" + sep + name + ".stat");
+				File file = new File("plugins" + sep + "War" + sep + "stats" + sep + name + ".stat");
 				
 				if(!file.exists()) {
 					War.war.msg(super.getSender(), "Stats for player " + ChatColor.BLUE + name + "\n" +

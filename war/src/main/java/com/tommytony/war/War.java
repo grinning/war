@@ -282,7 +282,7 @@ public class War extends JavaPlugin {
 			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + player.getDisplayName() + ".stat");
 			try {
 				Formatter writer = new Formatter(file);
-				writer.format("%i%i", stats.getKills(), stats.getDeaths());
+				writer.format("%d %d", stats.getKills(), stats.getDeaths());
 				writer.close();
 			} catch (FileNotFoundException e) {
 				Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid!");
