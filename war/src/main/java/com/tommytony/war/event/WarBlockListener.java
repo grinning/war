@@ -55,7 +55,7 @@ public class WarBlockListener implements Listener {
 		Team team = Team.getTeamByPlayerName(player.getName());
 		Warzone zone = Warzone.getZoneByLocation(player);
 		// Monument capturing
-		if (team != null && block != null && zone != null && zone.isMonumentCenterBlock(block) && block.getType() == team.getKind().getMaterial() && block.getData() == team.getKind().getData()) {
+		if (team != null && block != null && zone != null && zone.isMonumentCenterBlock(block) && block.getType() == team.getKind().getMaterial() && block.getData() == team.getKind().getData() && zone.getPvpReady()) {
 			Monument monument = zone.getMonumentFromCenterBlock(block);
 			if (monument != null && !monument.hasOwner()) {
 				monument.capture(team);
@@ -294,7 +294,11 @@ public class WarBlockListener implements Listener {
 					War.war.badMsg(player, "You can only steal one flag at a time!");
 				} else if (warzone.isBombThief(player.getName()) || warzone.isCakeThief(player.getName())) {
 					War.war.badMsg(player, "You can only steal one thing at a time!");
-				} else {
+				} else if(!warzone.getPvpReady()) {
+					War.war.badMsg(player, "This warzone is still in prep phase!");
+					event.setCancelled(true);
+					return;
+				} else{
 					Team lostFlagTeam = warzone.getTeamForFlagBlock(block);
 					if (lostFlagTeam.getPlayers().size() != 0) {
 						// player just broke the flag block of other team: cancel to avoid drop, give player the block, set block to air
@@ -345,6 +349,10 @@ public class WarBlockListener implements Listener {
 					War.war.badMsg(player, "You can only steal one bomb at a time!");
 				} else if (warzone.isFlagThief(player.getName()) || warzone.isCakeThief(player.getName())) {
 					War.war.badMsg(player, "You can only steal one thing at a time!");
+				}else if(!warzone.getPvpReady()) {
+				    War.war.badMsg(player, "Can't do this until the preptime is finished!");
+				    event.setCancelled(true);
+				    return;
 				} else {
 					Bomb bomb = warzone.getBombForBlock(block);
 					// player just broke the bomb block: cancel to avoid drop, give player the block, set block to air
@@ -393,6 +401,10 @@ public class WarBlockListener implements Listener {
 					War.war.badMsg(player, "You can only steal one cake at a time!");
 				} else if (warzone.isFlagThief(player.getName()) || warzone.isBombThief(player.getName())) {
 					War.war.badMsg(player, "You can only steal one thing at a time!");
+				} else if(!warzone.getPvpReady()) {
+					War.war.badMsg(player, "This zone is still in the preptime phase!");
+					event.setCancelled(true);
+					return;
 				} else {
 					Cake cake = warzone.getCakeForBlock(block);
 					// player just broke the cake block: cancel to avoid drop, give player the block, set block to air
