@@ -37,6 +37,7 @@ public class DominationMonumentTimerJob implements Runnable {
 		}
         //ok now time to add scores to teams
 		for(Monument mon : this.points) {
+			try {
 			Team owner = mon.getOwnerTeam();
 			owner.addPoint();
 			//detect a win for the team getting the points
@@ -44,8 +45,12 @@ public class DominationMonumentTimerJob implements Runnable {
 				zone.initializeZone();
 				this.winnerFound = true;
 				break; //we have a winner, time to exit the loop
-			} 
-		}
+			 }
+			}catch(NullPointerException e) {
+				//monument has no owner
+				continue;
+			}
+		 } 
 		
 		if(!this.winnerFound) { //still no winner! We need to assign another one of these threads!
 		    	DominationMonumentTimerJob thread = new DominationMonumentTimerJob(this.sec, this.zone);

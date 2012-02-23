@@ -170,7 +170,7 @@ public class War extends JavaPlugin {
 		warzoneDefaultConfig.put(WarzoneConfig.DEATHMESSAGES, true);
 		warzoneDefaultConfig.put(WarzoneConfig.MAXTNT, 5);
 		warzoneDefaultConfig.put(WarzoneConfig.PREPTIME, 0);
-		warzoneDefaultConfig.put(WarzoneConfig.DOMENABLED, true );
+		warzoneDefaultConfig.put(WarzoneConfig.DOMENABLED, false);
 		warzoneDefaultConfig.put(WarzoneConfig.DOMTIME, 15);
 		
 		teamDefaultConfig.put(TeamConfig.FLAGMUSTBEHOME, true);

@@ -21,28 +21,24 @@ import com.tommytony.war.utility.PlayerStat;
 
 public class GetStatsCommand extends AbstractWarCommand {
 
-	private CommandSender sender;
-	private String[] args;
+	
 	
 	public GetStatsCommand(WarCommandHandler handler, CommandSender sender, String[] args) {
 		super(handler, sender, args);
-		this.sender = sender;
-		this.args = args;
 	}
 
 	@Override
 	public boolean handle() {
 		
-		String name = args[0];
-		
-		if(this.args.length != 1) {
-			War.war.badMsg(sender, "Usage: /wstats <player>  or /warstats <player>");
+		if(super.args.length != 1) {
+			War.war.badMsg(super.getSender(), "Usage: /wstats <player>  or /warstats <player>");
 			return true;
-		} else if(this.args.length == 1) {
+		} else if(super.args.length == 1) {
+			String name = args[0];
 			PlayerStat stats = War.war.getPlayerStats(name);
 			
 			if(stats != null) {
-			    War.war.msg(sender, "Stats for player " + ChatColor.BLUE + name + "\n" + 
+			    War.war.msg(super.getSender(), "Stats for player " + ChatColor.BLUE + name + "\n" + 
 			    ChatColor.GOLD + "Kills: " + ChatColor.BLUE + stats.getKills() + "\n" +
 			    ChatColor.DARK_RED + "Deaths: " + ChatColor.BLUE + stats.getDeaths());
 			    //what is the point of reporting stats if you don't make them pretty? 
@@ -55,10 +51,10 @@ public class GetStatsCommand extends AbstractWarCommand {
 				File file = new File("plugins" + sep + "war" + sep + "stats" + sep + name + ".stat");
 				
 				if(!file.exists()) {
-					War.war.msg(sender, "Stats for player " + ChatColor.BLUE + name + "\n" +
+					War.war.msg(super.getSender(), "Stats for player " + ChatColor.BLUE + name + "\n" +
 				    ChatColor.GOLD + "Kills: " + ChatColor.BLUE + "0" + "\n" +
 					ChatColor.DARK_RED + "Deaths: " + ChatColor.BLUE + "0");
-					Bukkit.getServer().getLogger().log(Level.WARNING, "War> User " + sender + " requested stats from a user file that didn't exist");
+					Bukkit.getServer().getLogger().log(Level.WARNING, "War> User " + super.getSender().getName() + " requested stats from a user file that didn't exist");
 				} else { //if they don't exist we have to read them from files!
 					try {
 						Scanner read = new Scanner(file);
@@ -72,7 +68,7 @@ public class GetStatsCommand extends AbstractWarCommand {
 						Bukkit.getServer().getLogger().log(Level.WARNING, "War> Your computer is stupid");
 						e.printStackTrace();
 					}
-					War.war.msg(sender, "Stats for player " + ChatColor.BLUE + name + "\n" +
+					War.war.msg(super.getSender(), "Stats for player " + ChatColor.BLUE + name + "\n" +
 					ChatColor.GOLD + "Kills: " + ChatColor.BLUE + kills + "\n" +
 					ChatColor.DARK_RED + "Deaths: " + ChatColor.BLUE + deaths);
 				}
