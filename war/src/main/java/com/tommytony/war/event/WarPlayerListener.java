@@ -89,7 +89,7 @@ public class WarPlayerListener implements Listener {
 			PlayerStat stats = War.war.getPlayerStats(event.getPlayer().getDisplayName());
 			char sep = File.separatorChar;
 			
-			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
+			File file = new File("plugins" + sep + "War" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
 			try {
 				Formatter writer = new Formatter(file);
 				writer.format("%d %d", stats.getKills(), stats.getDeaths()); //now we write em
@@ -258,7 +258,7 @@ public class WarPlayerListener implements Listener {
 					PlayerStat stats = War.war.getPlayerStats(event.getPlayer().getDisplayName());
 					char sep = File.separatorChar;
 					
-					File file = new File("plugins" + sep + "war" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
+					File file = new File("plugins" + sep + "War" + sep + "stats" + sep + event.getPlayer().getDisplayName() + ".stat");
 					try {
 						Formatter writer = new Formatter(file);
 						writer.format("%d %d", stats.getKills(), stats.getDeaths()); //now we write em
@@ -834,7 +834,7 @@ public class WarPlayerListener implements Listener {
 			//register their file if it doesn't already exist!
 			String name = event.getPlayer().getDisplayName();
 			char sep = File.separatorChar;
-			File file = new File("plugins" + sep + "war" + sep + "stats" + sep + name + ".stat");
+			File file = new File("plugins" + sep + "War" + sep + "stats" + sep + name + ".stat");
 			
 			if(!file.exists()) {
 				try {
