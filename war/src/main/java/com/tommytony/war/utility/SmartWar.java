@@ -1,7 +1,6 @@
 package com.tommytony.war.utility;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 
 import com.tommytony.war.War;
@@ -10,6 +9,7 @@ import com.tommytony.war.War;
 public class SmartWar implements Runnable {
 
 	private War war;
+	private final double BlockingCoefficiant = 0.9;
 	
     public SmartWar(War instance) {
     	this.war = instance;
@@ -19,8 +19,21 @@ public class SmartWar implements Runnable {
 	    return ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 	}
 	
+	//number of threads = Number of availiable cores / (1 - Blocking Coefficiant)
+	//where 0 <= Blocking Coefficiant <= 1
+	//Blocking Coefficiant depends on the type of operation being performed
+	
 	public int getProcessors() {
 		return ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
+	}
+	
+	public int getAvailiableCores() {
+		return Runtime.getRuntime().availableProcessors();
+	}
+	
+	public int getNumberOfThreads() {
+		return (int) (this.getAvailiableCores() / (1 - this.BlockingCoefficiant));
+		
 	}
 	
 	public int getThreads() {

@@ -9,6 +9,7 @@ public enum WarzoneConfig {
 	DOMTIME (Integer.class),
 	FRIENDLYFIRE (Boolean.class),
 	GLASSWALLS (Boolean.class),
+	INFECTION (Boolean.class),
 	INSTABREAK (Boolean.class),
 	MAXTNT(Integer.class),
 	MINTEAMS (Integer.class),

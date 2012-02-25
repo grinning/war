@@ -31,6 +31,7 @@ import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.config.WarzoneConfigBag;
+import com.tommytony.war.job.CalculateRespawnPointJob;
 import com.tommytony.war.job.DominationMonumentTimerJob;
 import com.tommytony.war.job.InitZoneJob;
 import com.tommytony.war.job.LoadoutResetJob;
@@ -75,6 +76,7 @@ public class Warzone {
 	private HashMap<String, Team> flagThieves = new HashMap<String, Team>();
 	private HashMap<String, Bomb> bombThieves = new HashMap<String, Bomb>();
 	private HashMap<String, Cake> cakeThieves = new HashMap<String, Cake>();
+	private List<String> infected = new ArrayList<String>();
 	private HashMap<String, LoadoutSelection> loadoutSelections = new HashMap<String, LoadoutSelection>();
 	private HashMap<String, PlayerState> deadMenInventories = new HashMap<String, PlayerState>();
 	private final List<Player> respawn = new ArrayList<Player>();
@@ -384,6 +386,37 @@ public class Warzone {
 				}
 			}, team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) * 20L); // 20 ticks = 1 second
 		}
+	}
+	
+	public void handleInfectionRespawn(Player player) {
+		if(player != null) {
+		player.setRemainingAir(300);
+		player.setHealth(20);
+		player.setFoodLevel(20);
+		player.setSaturation(10);
+		player.setExhaustion(0);
+		player.setFireTicks(0);
+		player.setGameMode(GameMode.SURVIVAL);
+		player.getInventory().clear();
+		PotionEffect.clearPotionEffects(player);
+		boolean isFirstRespawn = false;
+		if (!this.getLoadoutSelections().keySet().contains(player.getName())) { //respawns could suck.... they may rock though lolz
+			isFirstRespawn = true;
+			this.getLoadoutSelections().put(player.getName(), new LoadoutSelection(true, 0));
+		} else {
+			this.getLoadoutSelections().get(player.getName()).setStillInSpawn(true);
+		}
+		CalculateRespawnPointJob job = new CalculateRespawnPointJob(this);
+		Bukkit.getScheduler().scheduleAsyncDelayedTask(War.war, job);
+		while(!job.done) {
+			
+		}
+		player.teleport(job.getFinalLoc());
+		if(isInfected(player.getDisplayName())) {
+			PotionEffect a = new PotionEffect(1, 10, 10000);
+			PotionEffect.restorePotionEffects(player, (List<PotionEffect>) a);
+		}
+	  }
 	}
 
 	public void resetInventory(Team team, Player player, HashMap<Integer, ItemStack> loadout) {
@@ -1402,5 +1435,21 @@ public class Warzone {
 	
 	public boolean getPvpReady() {
 		return this.pvpReady;
+	}
+	
+	public boolean isInfected(String name) {
+		for(String nomz : this.infected) {
+			if(nomz.equals(name))
+				return true;
+		}
+		return false;
+	}
+	
+	public void clearInfected() {
+		this.infected.clear();
+	}
+	
+	public void addInfected(String name) {
+		this.infected.add(name);
 	}
 }
