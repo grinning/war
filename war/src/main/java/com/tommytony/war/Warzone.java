@@ -411,6 +411,7 @@ public class Warzone {
 		while(!job.done.get()) { //ATOMIC STYLE!!!!!!
 			
 		}
+		job.notify(); //WAKE UP SILLY!!!
 		player.teleport(job.getFinalLoc());
 		if(isInfected(player.getDisplayName())) {
 			PotionEffect a = new PotionEffect(1, 10, 10000);

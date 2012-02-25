@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import com.tommytony.war.Warzone;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 
 public class CalculateRespawnPointJob implements Runnable {
 
@@ -98,6 +99,12 @@ public class CalculateRespawnPointJob implements Runnable {
 	public strictfp void setLocation(int x, int y, int z) {
 		this.done.lazySet(true); //I DO NOT WANT THE THREADS WRITING OVER EACH OTHER! CONCURRENCY SAFTEY IS MORE IMPORTANT
 		this.finalLoc = new Location(warzone.getWorld(), x, y, z);
+		try {
+			this.wait(); //We shall now chill out, our task is done.
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//OHH YA, ATOMIC STLYE !!!!!! NO NEED FOR SYNCHROSIS!!!
 	}
 	
