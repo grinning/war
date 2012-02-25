@@ -408,7 +408,7 @@ public class Warzone {
 		}
 		CalculateRespawnPointJob job = new CalculateRespawnPointJob(this);
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(War.war, job);
-		while(!job.done) {
+		while(!job.done.get()) { //ATOMIC STYLE!!!!!!
 			
 		}
 		player.teleport(job.getFinalLoc());

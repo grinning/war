@@ -4,20 +4,21 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import com.tommytony.war.Warzone;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CalculateRespawnPointJob implements Runnable {
 
 	private Warzone warzone;
-	public volatile boolean done;
 	private volatile Location finalLoc;
+	public volatile AtomicBoolean done = new AtomicBoolean(false);
+	
 	
 	public CalculateRespawnPointJob(Warzone warzone) {
 		this.warzone = warzone;
-		this.done = false;
+		this.done.lazySet(false);
 	}
 	
 	@Override
@@ -38,8 +39,17 @@ public class CalculateRespawnPointJob implements Runnable {
 			while(!calcdone) {
 				b[1] -= changefactor;
 				block = world.getBlockAt(b[0], b[1], b[2]);
-				if(block.getType() != Material.AIR) {
-					calcdone = true;
+				if(b[1] <= warzone.getVolume().getMinY()) { //if we cannot find anything! in this place, we gonna go up some then change to next X
+					b[1] = warzone.getVolume().getMaxY() - 1; //ohh ya!!!!!!!! (grinneroni + cheese)
+					b[0]++; //There be dinosaurs
+					calcdone = false;
+				}
+				if(block.getType() != Material.AIR) { //if we find a block lets do some more calculations!
+					Block up1 = world.getBlockAt(b[0], b[1] + 1, b[2]);
+					Block up2 = world.getBlockAt(b[0], b[1] + 2, b[2]);
+					if(up1.getType() == Material.AIR && up2.getType() == Material.AIR) {
+						calcdone = true; //our calculate is done, we found a spawnable position inside the warzone!
+					}
 				} else {
 					changefactor++;
 				}
@@ -85,9 +95,10 @@ public class CalculateRespawnPointJob implements Runnable {
 		return a;
 	}
 	
-	public strictfp synchronized void setLocation(int x, int y, int z) {
-		this.done = true;
+	public strictfp void setLocation(int x, int y, int z) {
+		this.done.lazySet(true); //I DO NOT WANT THE THREADS WRITING OVER EACH OTHER! CONCURRENCY SAFTEY IS MORE IMPORTANT
 		this.finalLoc = new Location(warzone.getWorld(), x, y, z);
+		//OHH YA, ATOMIC STLYE !!!!!! NO NEED FOR SYNCHROSIS!!!
 	}
 	
 	public strictfp Location getFinalLoc() {
