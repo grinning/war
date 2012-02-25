@@ -64,15 +64,15 @@ public class CalculateRespawnPointJob implements Runnable {
 		while(!getout) {
 		if(a[0] < warzone.getVolume().getMinX()) {
 			getout = false;
-			a[0] += rand.nextInt(10);
+			a[0] += rand.nextInt(warzone.getVolume().getSizeX());
 		}
 		if(a[1] < warzone.getVolume().getMinY()) {
 			getout = false;
-			a[1] += rand.nextInt(10);
+			a[1] += rand.nextInt(warzone.getVolume().getSizeY());
 		}
 		if(a[2] < warzone.getVolume().getMinZ()) {
 			getout = false;
-			a[2] += rand.nextInt(10);
+			a[2] += rand.nextInt(warzone.getVolume().getSizeZ());
 		}
 		if(a[1] < warzone.getVolume().getMaxY() && a[1] > warzone.getVolume().getMinY()) {
 			if(a[0] < warzone.getVolume().getMaxX() && a[1] > warzone.getVolume().getMinX()) {
