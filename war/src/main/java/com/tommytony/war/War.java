@@ -173,6 +173,7 @@ public class War extends JavaPlugin {
 		warzoneDefaultConfig.put(WarzoneConfig.DOMENABLED, false);
 		warzoneDefaultConfig.put(WarzoneConfig.DOMTIME, 15);
 		warzoneDefaultConfig.put(WarzoneConfig.INFECTION, false);
+		warzoneDefaultConfig.put(WarzoneConfig.SNOWGRENADE, false);
 		
 		teamDefaultConfig.put(TeamConfig.FLAGMUSTBEHOME, true);
 		teamDefaultConfig.put(TeamConfig.FLAGPOINTSONLY, false);

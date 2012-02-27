@@ -3,6 +3,7 @@ package com.tommytony.war.event;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,6 +33,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -615,6 +618,35 @@ public class WarEntityListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onProjectileHitEvent(final ProjectileHitEvent event) {
+		if(War.war.isLoaded()) {
+			Snowball grenade = (Snowball) event.getEntity();
+			Player player = (Player) grenade.getShooter();
+			if(Warzone.getZoneByLocation(player) != null 
+					&& Warzone.getZoneByLocation(player).getWarzoneConfig().getBoolean(WarzoneConfig.SNOWGRENADE)) {
+			  grenade.setBounce(true); //we bounce
+			  grenade.setVelocity(grenade.getVelocity().multiply(-1)); //Vector arithmetic, will reverse direction
+              try {
+				grenade.wait(1000); //wait for a second
+			  } catch (InterruptedException e) {
+				War.war.getLogger().log(Level.SEVERE, "War> Something is about to break");
+				//being serious
+			}  
+            grenade.setVelocity(grenade.getVelocity().multiply(-1)); //Again reverse direction
+            try {
+				grenade.wait(4000); //wait for 4 seconds 
+				//Grenade explosion time == 5 seconds.
+			} catch (InterruptedException e) {
+				War.war.getLogger().log(Level.SEVERE, "War> Something is about to break");
+			}
+            grenade.getLocation().getWorld().createExplosion(grenade.getLocation(), 20F);
+			}
+		} else {
+			return;
 		}
 	}
 

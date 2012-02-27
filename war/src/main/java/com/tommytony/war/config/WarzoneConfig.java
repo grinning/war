@@ -23,6 +23,7 @@ public enum WarzoneConfig {
 	RESETONEMPTY (Boolean.class),
 	RESETONLOAD (Boolean.class),
 	RESETONUNLOAD (Boolean.class),
+	SNOWGRENADE (Boolean.class),
 	UNBREAKABLE (Boolean.class);
 	
 	private final Class<?> configType;
