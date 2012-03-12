@@ -1,6 +1,7 @@
 package com.tommytony.war;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,13 +15,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
@@ -47,7 +49,7 @@ import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.structure.ZoneWallGuard;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerState;
-import com.tommytony.war.utility.PotionEffect;
+import com.tommytony.war.utility.PotionEffectHelper;
 import com.tommytony.war.volume.ZoneVolume;
 
 /**
@@ -309,7 +311,7 @@ public class Warzone {
 
 		// nom drops
 		for(Entity entity : (this.getWorld().getEntities())) {
-			if (!(entity instanceof Item) && !(entity instanceof CraftItem)) {
+			if (!(entity instanceof Item)) {
 				continue;
 			}
 			// validate position
@@ -357,7 +359,7 @@ public class Warzone {
 			player.setGameMode(GameMode.SURVIVAL);
 		}
 		// clear potion effects
-		PotionEffect.clearPotionEffects(player);
+		PotionEffectHelper.clearPotionEffects(player);
 		
 		boolean isFirstRespawn = false;
 		if (!this.getLoadoutSelections().keySet().contains(player.getName())) {
@@ -399,7 +401,7 @@ public class Warzone {
 		player.setFireTicks(0);
 		player.setGameMode(GameMode.SURVIVAL);
 		player.getInventory().clear();
-		PotionEffect.clearPotionEffects(player);
+		PotionEffectHelper.clearPotionEffects(player);
 		boolean isFirstRespawn = false;
 		if (!this.getLoadoutSelections().keySet().contains(player.getName())) { //respawns could suck.... they may rock though lolz
 			isFirstRespawn = true;
@@ -415,8 +417,8 @@ public class Warzone {
 		job.notify(); //WAKE UP SILLY!!!
 		player.teleport(job.getFinalLoc());
 		if(isInfected(player.getDisplayName())) {
-			PotionEffect a = new PotionEffect(1, 10, 10000);
-			PotionEffect.restorePotionEffects(player, (List<PotionEffect>) a);
+			PotionEffect a = new PotionEffect(PotionEffectType.SPEED, 10, 10000);
+			PotionEffectHelper.restorePotionEffects(player, (List<PotionEffect>) a);
 		}
 	  }
 	}
@@ -511,7 +513,7 @@ public class Warzone {
 	public void keepPlayerState(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		ItemStack[] contents = inventory.getContents();
-		List<PotionEffect> potionEffects = PotionEffect.getCurrentPotionEffects(player);
+		Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
 		
 		String playerTitle = player.getName();
 		if (War.war.isSpoutServer()) {
@@ -528,7 +530,7 @@ public class Warzone {
 																player.getExhaustion(), 
 																player.getSaturation(), 
 																player.getFoodLevel(), 
-																potionEffects,
+																player.getActivePotionEffects(),
 																playerTitle,
 																player.getLevel(),
 																player.getExp()));
@@ -544,7 +546,7 @@ public class Warzone {
 			player.setExhaustion(originalState.getExhaustion());
 			player.setSaturation(originalState.getSaturation());
 			player.setFoodLevel(originalState.getFoodLevel());
-			PotionEffect.restorePotionEffects(player, originalState.getPotionEffects());
+			PotionEffectHelper.restorePotionEffects(player, originalState.getPotionEffects());
 			player.setLevel(originalState.getLevel());
 			player.setExp(originalState.getExp());
 			

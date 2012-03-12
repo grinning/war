@@ -7,7 +7,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -18,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Item;
@@ -180,8 +178,8 @@ public class WarPlayerListener implements Listener {
 					event.setCancelled(true);
 				} else {
 					Item item = event.getItem();
-					if (item != null && item instanceof CraftItem) {
-						CraftItem cItem = (CraftItem) item;
+					if (item != null && item instanceof Item) {
+						Item cItem = (Item) item;
 						if (cItem != null) {
 							ItemStack itemStack = cItem.getItemStack();
 							if (itemStack != null && itemStack.getType() == team.getKind().getMaterial() && player.getInventory().contains(new ItemStack(team.getKind().getMaterial(), team.getKind().getData()))) {
@@ -277,6 +275,7 @@ public class WarPlayerListener implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (War.war.isLoaded()) {
@@ -299,16 +298,38 @@ public class WarPlayerListener implements Listener {
 			if(zone != null) {
 				if(zone.getWarzoneConfig().getBoolean(WarzoneConfig.EASYCONFIG)) {
 					//if we has Easy Config on
-					if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
+					if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 						if(event.getClickedBlock() instanceof Sign) {
 							for(Sign sign : zone.getLobby().getImportantSigns()) {
 								if(sign == event.getClickedBlock()) {
+									boolean bool_value;
+									int int_value;
+									String[] arg = new String[1];
 									if(sign.getLine(1).equals("autoassign: ")) {
-										boolean value = Boolean.parseBoolean(sign.getLine(2));
-										String[] arg = new String[1];
-										arg[0] = "autoassign:" + !value;
+										bool_value = Boolean.parseBoolean(sign.getLine(2));
+										arg[0] = "autoassign:" + Boolean.toString(!bool_value);
 										War.war.updateZoneFromNamedParams(zone, player, arg);
-									} 
+										sign.setLine(2, Boolean.toString(!bool_value));
+										sign.update();
+									} else if(sign.getLine(1).equals("blockheads: ")) {
+										bool_value = Boolean.parseBoolean(sign.getLine(2));
+										arg[0] = "blockheads:" + Boolean.toString(!bool_value);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Boolean.toString(!bool_value));
+										sign.update();
+									} else if(sign.getLine(1).equals("friendlyfire: ")) {
+										bool_value = Boolean.parseBoolean(sign.getLine(2));
+										arg[0] = "friendlyfire:" + Boolean.toString(!bool_value);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Boolean.toString(!bool_value));
+										sign.update();
+									} else if(sign.getLine(1).equals("glasswalls: ")) {
+										bool_value = Boolean.parseBoolean(sign.getLine(2));
+										arg[0] = "glasswalls:" + Boolean.toString(!bool_value);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Boolean.toString(!bool_value));
+										sign.update();
+									}
 								}
 							}
 						}

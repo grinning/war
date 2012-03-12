@@ -14,8 +14,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.craftbukkit.entity.CraftTNTPrimed;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.CreatureType;
@@ -287,7 +285,7 @@ public class WarEntityListener implements Listener {
 					String deathMessage = "";
 					String defenderString = Team.getTeamByPlayerName(d.getName()).getKind().getColor() + d.getName();
 					
-					if (event.getDamager() instanceof CraftTNTPrimed) {
+					if (event.getDamager() instanceof TNTPrimed) {
 						deathMessage = defenderString + ChatColor.WHITE + " exploded";
 					} else {
 						deathMessage = defenderString + ChatColor.WHITE + " died";
@@ -504,9 +502,9 @@ public class WarEntityListener implements Listener {
 			if (team != null && team.getSpawnVolume().contains(player.getLocation())) {
 				// smother out the fire that didn't burn out when you respawned
 				// Stop fire (upcast, watch out!)
-				if (player instanceof CraftPlayer) {
-					net.minecraft.server.Entity playerEntity = ((CraftPlayer) player).getHandle();
-					playerEntity.fireTicks = 0;
+				if (player instanceof Player) {
+					Entity playerEntity = ((Player) player);
+					playerEntity.setFireTicks(0);
 				}
 				event.setCancelled(true);
 			}

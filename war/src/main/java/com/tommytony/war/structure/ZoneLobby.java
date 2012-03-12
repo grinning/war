@@ -478,6 +478,7 @@ public class ZoneLobby {
 		Block topRight = block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).getRelative(behind).getRelative(rightSide).getRelative(rightSide).getRelative(
 				rightSide).getRelative(rightSide).getRelative(rightSide);
 		topRight.setType(Material.GLOWSTONE);
+		//Generate everything based on Top Left and Top Right
 		Block tempBlock = topLeft;
 		while(!tempBlock.equals(topRight)) {
 		   tempBlock = tempBlock.getRelative(rightSide);
@@ -510,7 +511,33 @@ public class ZoneLobby {
 		autoassign.setLine(0, "[War]");
 		autoassign.setLine(1, "autoassign: ");
 		autoassign.setLine(2, "false");
+		autoassign.update();
 		this.importantSigns.add(autoassign);
+		
+		Block firstSign = autoassign.getBlock();
+		firstSign.getRelative(rightSide).setType(Material.SIGN);
+		Sign blockheads = (Sign) firstSign.getRelative(rightSide);
+		blockheads.setLine(0, "[War]");
+		blockheads.setLine(1, "blockheads: ");
+		blockheads.setLine(2, "true");
+		blockheads.update();
+		this.importantSigns.add(blockheads);
+		
+		firstSign.getRelative(rightSide, 2).setType(Material.SIGN);
+		Sign friendlyfire = (Sign) firstSign.getRelative(rightSide, 2);
+		friendlyfire.setLine(0, "[War]");
+		friendlyfire.setLine(1, "friendlyfire: ");
+		friendlyfire.setLine(2, "false");
+		friendlyfire.update();
+		this.importantSigns.add(friendlyfire);
+		
+		firstSign.getRelative(rightSide, 3).setType(Material.SIGN);
+		Sign glasswalls = (Sign) firstSign.getRelative(rightSide, 3);
+		glasswalls.setLine(0, "[War]");
+		glasswalls.setLine(1, "glasswalls: ");
+		glasswalls.setLine(2, "true");
+		glasswalls.update();
+		this.importantSigns.add(glasswalls);
 	  }
 		
 		
