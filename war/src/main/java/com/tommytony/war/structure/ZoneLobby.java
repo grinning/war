@@ -351,6 +351,16 @@ public class ZoneLobby {
 				BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.NORTH, this.lobbyHalfSide - 1).getRelative(this.wall, 9).setType(Material.GLOWSTONE);
 				BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.SOUTH, this.lobbyHalfSide - 1).getRelative(this.wall, 9).setType(Material.GLOWSTONE);
 			}
+			//places our stuff
+			if(this.warzone.getWarzoneConfig().getBoolean(WarzoneConfig.EASYCONFIG)) {
+			   if(this.wall == BlockFace.NORTH || this.wall == BlockFace.SOUTH) {
+				Block block = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.WEST, this.lobbyHalfSide).getRelative(BlockFace.UP, 2).getRelative(BlockFace.NORTH, 4);
+				this.placeEasyZoneConfig(block);
+			} else {
+				Block block = BlockInfo.getBlock(this.volume.getWorld(), this.lobbyMiddleWallBlock).getRelative(BlockFace.DOWN).getRelative(BlockFace.NORTH, this.lobbyHalfSide).getRelative(BlockFace.UP, 2).getRelative(BlockFace.EAST);
+				this.placeEasyZoneConfig(block);
+			}
+		  }
 		} else {
 			War.war.log("Failed to initalize zone lobby for zone " + this.warzone.getName(), java.util.logging.Level.WARNING);
 		}
