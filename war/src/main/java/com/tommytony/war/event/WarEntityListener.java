@@ -1,10 +1,12 @@
 package com.tommytony.war.event;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,12 +16,16 @@ import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.entity.CraftTNTPrimed;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wolf;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -586,9 +592,58 @@ public class WarEntityListener implements Listener {
 			//ok now we need to update the deaths for each player
 			PlayerStat personWhoDied = War.war.getPlayerStats(player.getDisplayName());
 			personWhoDied.incDeaths();
+			personWhoDied.zeroKillStreak();
 			PlayerStat personWhoKilled = War.war.getPlayerStats(player.getKiller().getDisplayName());
 			personWhoKilled.incKills();
+			personWhoKilled.incKillStreak();
 			//see updated this stuff so ya :)
+			
+			//check for kill streaks
+			if(personWhoKilled.getKillStreak() == 3) {
+				ItemStack stack = player.getKiller().getItemInHand();
+				if(stack.getType() == Material.WOOD_SWORD) {
+					stack.addEnchantment(Enchantment.DAMAGE_ALL, 2);
+					stack.setDurability((short) (stack.getDurability() + 100));
+				} else if(stack.getType() == Material.STONE_SWORD) {
+					stack.addEnchantment(Enchantment.DAMAGE_ALL, 2);
+					stack.setDurability((short) (stack.getDurability() + 100));
+				} else if(stack.getType() == Material.IRON_SWORD) {
+					stack.addEnchantment(Enchantment.DAMAGE_ALL, 2);
+					stack.setDurability((short) (stack.getDurability() + 100));
+				} else if(stack.getType() == Material.DIAMOND_SWORD) {
+					stack.addEnchantment(Enchantment.DAMAGE_ALL, 2);
+					stack.setDurability((short) (stack.getDurability() + 100));
+				} else if(stack.getType() == Material.BOW) {
+					stack.addEnchantment(Enchantment.ARROW_DAMAGE, 2);
+					stack.setDurability((short) (stack.getDurability() + 100));
+				} else {
+					player.getKiller().setHealth(20);
+					War.war.msg(player.getKiller(), "Good Job for achieving a 3 kill streak, you had no weapons so we decided to give you health");
+				}
+				War.war.msg(player.getKiller(), "Congrats on the 3 kill streak!");
+			} else if(personWhoKilled.getKillStreak() == 5) {
+				player.getKiller().getInventory().addItem(new ItemStack(Material.BLAZE_ROD));
+				War.war.msg(player.getKiller(), "Use this blaze rod to call in a CREEPER-STRIKE!!!!\n" +
+						"And congrats on the 5 kill streak!");
+				Warzone.getZoneByLocation(player.getKiller()).addKillStreakPerson(player.getKiller());
+			} else if(personWhoKilled.getKillStreak() == 7) {
+				War.war.msg(player.getKiller(), "Calling in the dogs! Also, Congrats on Sexy Seven!");
+				Location dropPoint = Team.getTeamByPlayerName(player.getName()).getTeamSpawn();
+				Wolf dog1 = (Wolf) dropPoint.getWorld().spawnCreature(dropPoint, CreatureType.WOLF);
+				Wolf dog2 = (Wolf) dropPoint.getWorld().spawnCreature(dropPoint, CreatureType.WOLF);
+				Wolf dog3 = (Wolf) dropPoint.getWorld().spawnCreature(dropPoint, CreatureType.WOLF);
+				Wolf dog4 = (Wolf) dropPoint.getWorld().spawnCreature(dropPoint, CreatureType.WOLF);
+				dog1.setAngry(true);
+				dog2.setAngry(true);
+				dog3.setAngry(true);
+				dog4.setAngry(true);
+				Wolf[] wolfs = new Wolf[4];
+				wolfs[0] = dog1;
+				wolfs[1] = dog2;
+				wolfs[2] = dog3;
+				wolfs[3] = dog4;
+				giveDogNewTarget(Team.getTeamByPlayerName(player.getKiller().getName()), Warzone.getZoneByLocation(player), wolfs);
+			}
 			
 			event.getDrops().clear();
 			if (!zone.getWarzoneConfig().getBoolean(WarzoneConfig.REALDEATHS)) {
@@ -623,7 +678,7 @@ public class WarEntityListener implements Listener {
 	
 	@EventHandler
 	public void onProjectileHitEvent(final ProjectileHitEvent event) {
-		if(War.war.isLoaded()) {
+		if(War.war.isLoaded() && event.getEntity() instanceof Snowball) {
 			Snowball grenade = (Snowball) event.getEntity();
 			Player player = (Player) grenade.getShooter();
 			if(Warzone.getZoneByLocation(player) != null 
@@ -648,6 +703,24 @@ public class WarEntityListener implements Listener {
 		} else {
 			return;
 		}
+	}
+	
+	public static void giveDogNewTarget(Team senderTeam, Warzone zone, Wolf[] wolfs) {
+		Team targetTeam = null;
+		Iterator<Team> a = zone.getTeams().iterator();
+		while(a.hasNext()) {
+			targetTeam = a.next();
+			if(targetTeam != senderTeam) {
+				break;
+			}
+		}
+		Player[] players = (Player[]) targetTeam.getPlayers().toArray();
+		Random rand = new Random();
+		int num = rand.nextInt(players.length - 1);
+		wolfs[0].setTarget(players[num]);
+		wolfs[1].setTarget(players[num]);
+		wolfs[2].setTarget(players[num]);
+		wolfs[3].setTarget(players[num]);
 	}
 
 }

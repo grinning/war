@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -17,6 +18,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.entity.CraftItem;
+import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -292,6 +295,46 @@ public class WarPlayerListener implements Listener {
 			} 
 
 			Warzone zone = Warzone.getZoneByPlayerName(player.getName());
+			if(zone != null) {
+				Iterator<Player> it = zone.getKillStreakPeople().iterator();
+				boolean onList = false;
+				
+				while(it.hasNext()) {
+					Player temp = it.next();
+					if(temp == player) {
+						onList = true;
+						break;
+					}
+				}
+				
+				Location bomb = null;
+				
+				if(event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+					bomb = event.getClickedBlock().getLocation();
+				}
+				
+				if(bomb != null && onList) {
+					War.war.msg(player, "Bombs are on their way");
+					zone.removeKillStreakPerson(player);
+					try {
+						wait(5000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Creeper c1 = (Creeper) player.getWorld().spawnCreature(bomb, CreatureType.CREEPER);
+					Creeper c2 = (Creeper) player.getWorld().spawnCreature(bomb, CreatureType.CREEPER);
+					Creeper c3 = (Creeper) player.getWorld().spawnCreature(bomb, CreatureType.CREEPER);
+					Creeper c4 = (Creeper) player.getWorld().spawnCreature(bomb, CreatureType.CREEPER);
+					Creeper c5 = (Creeper) player.getWorld().spawnCreature(bomb, CreatureType.CREEPER);
+					c5.setPowered(true);
+					c4.setPowered(true);
+					c3.setPowered(true);
+					c2.setPowered(true);
+					c1.setPowered(true);
+				}
+			}
+			
 			if (zone != null && zone.getLoadoutSelections().containsKey(player.getName()) 
 					&& zone.getLoadoutSelections().get(player.getName()).isStillInSpawn()) {
 				event.setUseItemInHand(Result.DENY);
@@ -400,6 +443,8 @@ public class WarPlayerListener implements Listener {
 							this.handleDisabledZone(event, player, zone);
 						} else if (team.getPlayers().size() < team.getTeamConfig().resolveInt(TeamConfig.TEAMSIZE)) {
 							team.addPlayer(player);
+							War.war.getPlayerStats(player.getName()).zeroKillStreak();
+							//set his kill streak to 0
 							team.resetSign();
 							if (War.war.getWarHub() != null) {
 								War.war.getWarHub().resetZoneSign(zone);

@@ -64,6 +64,7 @@ public class Warzone {
 	private final List<Resupply> resupply = new ArrayList<Resupply>();
 	private final List<Bomb> bombs = new ArrayList<Bomb>();
 	private final List<Cake> cakes = new ArrayList<Cake>();
+	private final List<Player> killStreak5 = new ArrayList<Player>();
 	private Location teleport;
 	private ZoneLobby lobby;
 	private Location rallyPoint;
@@ -1452,5 +1453,21 @@ public class Warzone {
 	
 	public void addInfected(String name) {
 		this.infected.add(name);
+	}
+	
+	public void addKillStreakPerson(Player player) {
+		this.killStreak5.add(player);
+	}
+	
+	public void clearKillStreakPeople() {
+		this.killStreak5.clear();
+	}
+	
+	public void removeKillStreakPerson(Player player) {
+		this.killStreak5.remove(player);
+	}
+	
+	public List<Player> getKillStreakPeople() {
+		return this.killStreak5;
 	}
 }
