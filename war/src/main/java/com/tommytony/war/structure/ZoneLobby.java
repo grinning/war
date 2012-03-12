@@ -1,5 +1,6 @@
 package com.tommytony.war.structure;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 
@@ -37,6 +39,7 @@ public class ZoneLobby {
 	BlockInfo warHubLinkGate = null;
 
 	Map<String, BlockInfo> teamGateBlocks = new HashMap<String, BlockInfo>();
+	List<Sign> importantSigns = new ArrayList<Sign>();
 	BlockInfo autoAssignGate = null;
 
 	BlockInfo zoneTeleportBlock = null;
@@ -427,6 +430,82 @@ public class ZoneLobby {
 		}
 	}
 
+	private void placeEasyZoneConfig(Block block) {
+		
+		if(block != null) {
+		BlockFace leftSide = null;
+		BlockFace rightSide = null;
+		BlockFace behind = null;
+		
+		if(this.wall == BlockFace.NORTH) {
+			leftSide = BlockFace.EAST;
+			rightSide = BlockFace.WEST;
+			behind = BlockFace.SOUTH;
+		} else if (this.wall == BlockFace.EAST) {
+			leftSide = BlockFace.SOUTH;
+			rightSide = BlockFace.NORTH;
+			behind = BlockFace.WEST;
+		} else if (this.wall == BlockFace.SOUTH) {
+			leftSide = BlockFace.WEST;
+			rightSide = BlockFace.EAST;
+			behind = BlockFace.NORTH;
+		} else if (this.wall == BlockFace.WEST) {
+			leftSide = BlockFace.NORTH;
+			rightSide = BlockFace.SOUTH;
+			behind = BlockFace.EAST;
+		 }
+		block.getRelative(BlockFace.UP).getRelative(behind).getRelative(BlockFace.UP).setType(Material.GLASS);
+		block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(Material.SIGN);
+		Sign welcome = (Sign) block.getRelative(BlockFace.UP);
+		welcome.setLine(0, "[War]");
+		welcome.setLine(1, "Zone Config");
+		welcome.setLine(2, "Zone:");
+		welcome.setLine(3, this.warzone.getName());
+		welcome.update();
+		Block topLeft = block.getRelative(behind).getRelative(leftSide).getRelative(BlockFace.UP).getRelative(leftSide).getRelative(leftSide).getRelative(
+				leftSide).getRelative(leftSide).getRelative(BlockFace.UP);
+		topLeft.setType(Material.GLOWSTONE);
+		Block topRight = block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).getRelative(behind).getRelative(rightSide).getRelative(rightSide).getRelative(
+				rightSide).getRelative(rightSide).getRelative(rightSide);
+		topRight.setType(Material.GLOWSTONE);
+		Block tempBlock = topLeft;
+		while(!tempBlock.equals(topRight)) {
+		   tempBlock = tempBlock.getRelative(rightSide);
+		   tempBlock.setType(Material.GLASS);
+		 }
+		
+		tempBlock = topLeft.getRelative(BlockFace.DOWN);
+		while(!tempBlock.equals(topRight.getRelative(BlockFace.DOWN))) {
+			tempBlock.setType(Material.GLASS);
+			tempBlock = tempBlock.getRelative(rightSide);
+		}
+		tempBlock.setType(Material.GLASS);
+		
+		tempBlock = topLeft.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN);
+		while(!tempBlock.equals(topRight.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN))) {
+			tempBlock.setType(Material.GLASS);
+			tempBlock = tempBlock.getRelative(rightSide);
+		}
+		tempBlock.setType(Material.GLASS);
+		
+		tempBlock = topLeft.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN);
+		while(!tempBlock.equals(topRight.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN))) {
+			tempBlock.setType(Material.GLASS);
+			tempBlock = tempBlock.getRelative(rightSide);
+		}
+		tempBlock.setType(Material.GLASS);
+		
+		topLeft.getRelative(BlockFace.DOWN).getRelative(rightSide).setType(Material.SIGN);
+		Sign autoassign = (Sign) topLeft.getRelative(BlockFace.DOWN).getRelative(rightSide);
+		autoassign.setLine(0, "[War]");
+		autoassign.setLine(1, "autoassign: ");
+		autoassign.setLine(2, "false");
+		this.importantSigns.add(autoassign);
+	  }
+		
+		
+	}
+	
 	private void placeGate(Block block, Material material) {
 		if (block != null) {
 			BlockFace leftSide = null; // look at the zone
@@ -708,6 +787,10 @@ public class ZoneLobby {
 		}
 
 		return false;
+	}
+	
+	public List<Sign> getImportantSigns() {
+		return this.importantSigns;
 	}
 	
 	@Override

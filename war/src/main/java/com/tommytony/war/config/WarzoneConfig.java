@@ -7,6 +7,7 @@ public enum WarzoneConfig {
 	DISABLED (Boolean.class),
 	DOMENABLED (Boolean.class),
 	DOMTIME (Integer.class),
+	EASYCONFIG (Boolean.class),
 	FRIENDLYFIRE (Boolean.class),
 	GLASSWALLS (Boolean.class),
 	INFECTION (Boolean.class),

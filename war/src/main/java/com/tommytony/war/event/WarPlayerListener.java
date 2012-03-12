@@ -17,6 +17,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
@@ -296,6 +297,24 @@ public class WarPlayerListener implements Listener {
 
 			Warzone zone = Warzone.getZoneByPlayerName(player.getName());
 			if(zone != null) {
+				if(zone.getWarzoneConfig().getBoolean(WarzoneConfig.EASYCONFIG)) {
+					//if we has Easy Config on
+					if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
+						if(event.getClickedBlock() instanceof Sign) {
+							for(Sign sign : zone.getLobby().getImportantSigns()) {
+								if(sign == event.getClickedBlock()) {
+									if(sign.getLine(1).equals("autoassign: ")) {
+										boolean value = Boolean.parseBoolean(sign.getLine(2));
+										String[] arg = new String[1];
+										arg[0] = "autoassign:" + !value;
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+									} 
+								}
+							}
+						}
+					}
+				}
+				
 				Iterator<Player> it = zone.getKillStreakPeople().iterator();
 				boolean onList = false;
 				
