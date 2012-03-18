@@ -474,6 +474,8 @@ public class ZoneLobby {
 		welcome.update();
 		Block topLeft = block.getRelative(behind).getRelative(leftSide).getRelative(BlockFace.UP).getRelative(leftSide).getRelative(leftSide).getRelative(
 				leftSide).getRelative(leftSide).getRelative(BlockFace.UP);
+		//5 over left side
+		//10 blocks per row
 		topLeft.setType(Material.GLOWSTONE);
 		Block topRight = block.getRelative(BlockFace.UP).getRelative(BlockFace.UP).getRelative(behind).getRelative(rightSide).getRelative(rightSide).getRelative(
 				rightSide).getRelative(rightSide).getRelative(rightSide);
@@ -510,7 +512,7 @@ public class ZoneLobby {
 		Sign autoassign = (Sign) topLeft.getRelative(BlockFace.DOWN).getRelative(rightSide);
 		autoassign.setLine(0, "[War]");
 		autoassign.setLine(1, "autoassign: ");
-		autoassign.setLine(2, "false");
+		autoassign.setLine(2, warzone.getWarzoneConfig().getBoolean(WarzoneConfig.AUTOASSIGN).toString());
 		autoassign.update();
 		this.importantSigns.add(autoassign);
 		
@@ -519,7 +521,7 @@ public class ZoneLobby {
 		Sign blockheads = (Sign) firstSign.getRelative(rightSide);
 		blockheads.setLine(0, "[War]");
 		blockheads.setLine(1, "blockheads: ");
-		blockheads.setLine(2, "true");
+		blockheads.setLine(2, warzone.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS).toString());
 		blockheads.update();
 		this.importantSigns.add(blockheads);
 		
@@ -527,7 +529,7 @@ public class ZoneLobby {
 		Sign friendlyfire = (Sign) firstSign.getRelative(rightSide, 2);
 		friendlyfire.setLine(0, "[War]");
 		friendlyfire.setLine(1, "friendlyfire: ");
-		friendlyfire.setLine(2, "false");
+		friendlyfire.setLine(2, warzone.getWarzoneConfig().getBoolean(WarzoneConfig.FRIENDLYFIRE).toString());
 		friendlyfire.update();
 		this.importantSigns.add(friendlyfire);
 		
@@ -535,9 +537,51 @@ public class ZoneLobby {
 		Sign glasswalls = (Sign) firstSign.getRelative(rightSide, 3);
 		glasswalls.setLine(0, "[War]");
 		glasswalls.setLine(1, "glasswalls: ");
-		glasswalls.setLine(2, "true");
+		glasswalls.setLine(2, warzone.getWarzoneConfig().getBoolean(WarzoneConfig.GLASSWALLS).toString());
 		glasswalls.update();
 		this.importantSigns.add(glasswalls);
+		
+		firstSign.getRelative(rightSide, 4).setType(Material.SIGN);
+		Sign instabreak = (Sign) firstSign.getRelative(rightSide, 4);
+		instabreak.setLine(0, "[War]");
+		instabreak.setLine(1, "instabreak: ");
+		instabreak.setLine(2, warzone.getWarzoneConfig().getBoolean(WarzoneConfig.INSTABREAK).toString());
+		instabreak.update();
+		this.importantSigns.add(instabreak);
+		
+		firstSign.getRelative(rightSide, 5).setType(Material.SIGN);
+		Sign minplayers = (Sign) firstSign.getRelative(rightSide, 5);
+		minplayers.setLine(0, "[War]");
+		minplayers.setLine(1, "minplayers: ");
+		minplayers.setLine(2, warzone.getWarzoneConfig().getInt(WarzoneConfig.MINPLAYERS).toString());
+		minplayers.update();
+		this.importantSigns.add(minplayers);
+		
+		firstSign.getRelative(rightSide, 6).setType(Material.SIGN);
+		Sign minteams = (Sign) firstSign.getRelative(rightSide, 6);
+		minteams.setLine(0, "[War]");
+		minteams.setLine(1, "minteams: ");
+		minteams.setLine(2, warzone.getWarzoneConfig().getInt(WarzoneConfig.MINTEAMS).toString());
+		minteams.update();
+		this.importantSigns.add(minteams);
+		
+		firstSign.getRelative(rightSide, 7).setType(Material.SIGN);
+		Sign monumentheal = (Sign) firstSign.getRelative(rightSide, 7);
+		monumentheal.setLine(0, "[War]");
+		monumentheal.setLine(1, "monumentheal: ");
+		monumentheal.setLine(2, warzone.getWarzoneConfig().getInt(WarzoneConfig.MONUMENTHEAL).toString());
+		monumentheal.update();
+		this.importantSigns.add(monumentheal);
+		
+		firstSign.getRelative(rightSide, 8).setType(Material.SIGN);
+		Sign nomobs = (Sign) firstSign.getRelative(rightSide, 8);
+		nomobs.setLine(0, "[War]");
+		nomobs.setLine(1, "nocreatures: ");
+		nomobs.setLine(2, warzone.getWarzoneConfig().getInt(WarzoneConfig.NOCREATURES).toString());
+		nomobs.update();
+		this.importantSigns.add(nomobs);
+		
+		firstSign.getRelative(rightSide, 9).setType(Material.SIGN);
 	  }
 		
 		

@@ -296,15 +296,16 @@ public class WarPlayerListener implements Listener {
 
 			Warzone zone = Warzone.getZoneByPlayerName(player.getName());
 			if(zone != null) {
-				if(zone.getWarzoneConfig().getBoolean(WarzoneConfig.EASYCONFIG)) {
+				if(zone.getWarzoneConfig().getBoolean(WarzoneConfig.EASYCONFIG) && event.getClickedBlock()
+						instanceof Sign) {
 					//if we has Easy Config on
+					int int_value;
+					String[] arg = new String[1];
 					if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-						if(event.getClickedBlock() instanceof Sign) {
+						//go through them signs
 							for(Sign sign : zone.getLobby().getImportantSigns()) {
-								if(sign == event.getClickedBlock()) {
+								if(sign.equals(event.getClickedBlock())) {
 									boolean bool_value;
-									int int_value;
-									String[] arg = new String[1];
 									if(sign.getLine(1).equals("autoassign: ")) {
 										bool_value = Boolean.parseBoolean(sign.getLine(2));
 										arg[0] = "autoassign:" + Boolean.toString(!bool_value);
@@ -329,11 +330,47 @@ public class WarPlayerListener implements Listener {
 										War.war.updateZoneFromNamedParams(zone, player, arg);
 										sign.setLine(2, Boolean.toString(!bool_value));
 										sign.update();
+									} else if(sign.getLine(1).equals("instabreak: ")) {
+										bool_value = Boolean.parseBoolean(sign.getLine(2));
+										arg[0] = "instabreak:" + Boolean.toString(!bool_value);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Boolean.toString(!bool_value));
+										sign.update();
+									} else if(sign.getLine(1).equals("minplayers: ")) {
+										int_value = Integer.parseInt(sign.getLine(2));
+										arg[0] = "minplayers:" + Integer.toString(int_value + 1);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Integer.toString(int_value + 1));
+										sign.update();
+									} else if(sign.getLine(1).equals("minteams: ")) {
+										int_value = Integer.parseInt(sign.getLine(2));
+										arg[0] = "minteams:" + Integer.toString(int_value + 1);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Integer.toString(int_value + 1));
+										sign.update();
+									}
+								}
+							}
+						} else if(event.getAction() == Action.LEFT_CLICK_BLOCK) {
+							for(Sign sign : zone.getLobby().getImportantSigns()) {
+								if(sign.equals(event.getClickedBlock())) {
+									if(sign.getLine(1).equals("minplayers: ")) {
+										int_value = Integer.parseInt(sign.getLine(2));
+										arg[0] = "minplayers:" + Integer.toString(int_value - 1);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Integer.toString(int_value - 1));
+										sign.update();
+									} else if(sign.getLine(1).equals("minteams: ")) {
+										int_value = Integer.parseInt(sign.getLine(2));
+										arg[0] = "minteams:" + Integer.toString(int_value - 1);
+										War.war.updateZoneFromNamedParams(zone, player, arg);
+										sign.setLine(2, Integer.toString(int_value - 1));
+										sign.update();
 									}
 								}
 							}
 						}
-					}
+					
 				}
 				
 				Iterator<Player> it = zone.getKillStreakPeople().iterator();
@@ -354,7 +391,7 @@ public class WarPlayerListener implements Listener {
 				}
 				
 				if(bomb != null && onList) {
-					War.war.msg(player, "Bombs are on their way");
+					War.war.msg(player, "Creepers are on their way!");
 					zone.removeKillStreakPerson(player);
 					try {
 						wait(5000);

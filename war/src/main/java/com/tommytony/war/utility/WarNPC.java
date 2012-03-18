@@ -4,9 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import com.tommytony.war.Warzone;
 import com.tommytony.war.structure.Monument;
@@ -43,8 +47,10 @@ public class WarNPC  {
 		this.lookAt(player.getLocation());
 	}
 	
-	public void fireArrow() {
-		npc.shootArrow();
+	public void fireArrow(Entity target) {
+		Arrow arrow = npc.shootArrow();
+		arrow.setShooter(this.npc);
+
 	}
 	
 	public void turnAround() {

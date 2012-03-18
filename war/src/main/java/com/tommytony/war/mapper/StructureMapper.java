@@ -61,7 +61,6 @@ public class StructureMapper {
 	    	PrintWriter pw = new PrintWriter(new FileWriter(file.getAbsolutePath()));
 	    	pw.println((new StringBuilder().append(frontEnd)));
 	    	pw.println((new StringBuilder().append(blocks)));
-	    	pw.flush();
 	    	pw.close();
 	    } catch(IOException e) {
 	    	e.printStackTrace();
