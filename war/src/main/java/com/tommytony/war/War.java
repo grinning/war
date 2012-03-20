@@ -450,7 +450,7 @@ public class War extends JavaPlugin {
 			StringBuilder returnMessage = new StringBuilder();
 			if (namedParams.containsKey("author")) {
 				for(String author : namedParams.get("author").split(",")) {
-					if (!author.equals("") && !warzone.getAuthors().contains(author)) {
+					if (!(author.length() == 0) && !warzone.getAuthors().contains(author)) {
 						warzone.addAuthor(author);
 						returnMessage.append(" author " + author + " added.");
 					}
@@ -639,14 +639,14 @@ public class War extends JavaPlugin {
 	}
 	
 	private String ifEmptyInheritedForWarzone(String maybeEmpty) {
-		if (maybeEmpty.equals("")) {
+		if (maybeEmpty.length() == 0) {
 			maybeEmpty = " all values inherited (see " + ChatColor.GREEN + "/warcfg -p)" + ChatColor.WHITE;
 		}
 		return maybeEmpty;
 	}
 	
 	private String ifEmptyInheritedForTeam(String maybeEmpty) {
-		if (maybeEmpty.equals("")) {
+		if (maybeEmpty.length() == 0) {
 			maybeEmpty = " all values inherited (see " + ChatColor.GREEN + "/warcfg -p" + ChatColor.WHITE 
 				+ " and " + ChatColor.GREEN + "/zonecfg -p" + ChatColor.WHITE + ")";
 		}
@@ -654,7 +654,7 @@ public class War extends JavaPlugin {
 	}
 
 	private String ifEmptyEveryone(String maybeEmpty) {
-		if (maybeEmpty.equals("")) {
+		if (maybeEmpty.length() == 0) {
 			maybeEmpty = "*";
 		}
 		return maybeEmpty;
@@ -755,7 +755,7 @@ public class War extends JavaPlugin {
 	// the only way to find a zone that has only one corner
 	public Warzone findWarzone(String warzoneName) {
 		for (Warzone warzone : this.warzones) {
-			if (warzone.getName().toLowerCase().equals(warzoneName.toLowerCase())) {
+			if (warzone.getName().equalsIgnoreCase(warzoneName)) {
 				return warzone;
 			}
 		}

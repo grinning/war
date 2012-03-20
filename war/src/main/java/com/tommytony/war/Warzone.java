@@ -102,7 +102,7 @@ public class Warzone {
 	public static Warzone getZoneByName(String name) {
 		Warzone bestGuess = null;
 		for (Warzone warzone : War.war.getWarzones()) {
-			if (warzone.getName().toLowerCase().equals(name.toLowerCase())) {
+			if (warzone.getName().equalsIgnoreCase(name)) {
 				// perfect match, return right away
 				return warzone;
 			} else if (warzone.getName().toLowerCase().startsWith(name.toLowerCase())) {
@@ -928,7 +928,7 @@ public class Warzone {
 						scores.append(t.getName() + "(" + t.getPoints() + "/" + t.getTeamConfig().resolveInt(TeamConfig.MAXSCORE) + ") ");
 					}
 				}
-				if (!scores.equals("")) {
+				if (!(scores.length() == 0)) {
 					for (Team t : teams) {
 						t.teamcast("New scores - " + scores);
 					}
