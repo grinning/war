@@ -7,7 +7,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +23,15 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opencl.CL;
+import org.lwjgl.opencl.CLCommandQueue;
+import org.lwjgl.opencl.CLContext;
+import org.lwjgl.opencl.CLDevice;
+import org.lwjgl.opencl.CLMem;
+import org.lwjgl.opencl.CLPlatform;
+import org.lwjgl.opencl.CL10;
 
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.FlagReturn;
@@ -96,7 +104,17 @@ public class War extends JavaPlugin {
 	private final WarzoneConfigBag warzoneDefaultConfig = new WarzoneConfigBag();
 	private final TeamConfigBag teamDefaultConfig = new TeamConfigBag();
 	private SpoutDisplayer spoutMessenger = null;
-
+	
+	//CL stuff
+	
+	private CLContext context;
+	private List<CLDevice> gpus = new ArrayList<CLDevice>();
+	private CLPlatform platform;
+	private CLCommandQueue clCommands;
+	//CL Buffer space
+	
+	private CLMem aBuf;
+	
 	public War() {
 		super();
 		War.war = this;
@@ -257,6 +275,17 @@ public class War extends JavaPlugin {
 		statsDir.mkdir();
 				
 		this.log("War v" + this.desc.getVersion() + " is on.", Level.INFO);
+		
+		//init openCL and get devices
+		try {
+			CL.create();
+			platform = CLPlatform.getPlatforms().get(0);
+			gpus = platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
+			context = CLContext.create(platform, gpus, null);
+			clCommands = CL10.clCreateCommandQueue(context, gpus.get(0), CL10.CL_QUEUE_PROFILING_ENABLE, null);
+		} catch (LWJGLException e) {
+			Bukkit.getServer().getLogger().log(Level.WARNING, "War> Dependency error!");
+		}
 	}
 
 	/**
@@ -292,6 +321,12 @@ public class War extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
+		//De initialize the openCL resources
+		CL10.clReleaseCommandQueue(clCommands);
+		CL10.clReleaseContext(context);
+		CL.destroy();
+		
+		//garbage collect
 		System.gc();
 	}
 
@@ -537,39 +572,40 @@ public class War extends JavaPlugin {
 		
 		ChatColor normalColor = ChatColor.WHITE;
 		
-		String teamConfigStr = "";
+		//Tiny optimizations that improve us a few hundred milliseconds per run
+		StringBuffer teamConfigStr = new StringBuffer();
 		InventoryBag invs = team.getInventories();
-		teamConfigStr += getLoadoutsString(invs);
+		teamConfigStr.append(getLoadoutsString(invs));
 		
 		for (TeamConfig teamConfig : TeamConfig.values()) {
 			Object value = team.getTeamConfig().getValue(teamConfig);
 			if (value != null) {
-				teamConfigStr += " " + teamConfig.toStringWithValue(value).replace(":", ":" + teamColor) + normalColor;
+				teamConfigStr.append(" " + teamConfig.toStringWithValue(value).replace(":", ":" + teamColor) + normalColor);
 			}
 		}
 		
 		return " ::" + teamColor + "Team " + team.getName() + teamColor +  " config" + normalColor + "::"  
-			+ ifEmptyInheritedForTeam(teamConfigStr);
+			+ ifEmptyInheritedForTeam(teamConfigStr.toString());
 	}
 
 	private String getLoadoutsString(InventoryBag invs) {
-		String loadoutsString = "";
+		StringBuffer loadoutsString = new StringBuffer();
 		ChatColor loadoutColor = ChatColor.GREEN;
 		ChatColor normalColor = ChatColor.WHITE;
 		
 		if (invs.hasLoadouts()) {
-			String loadouts = "";
+			StringBuffer loadouts = new StringBuffer();
 			for (String loadoutName : invs.getLoadouts().keySet()) {
-				loadouts += loadoutName + ",";
+				loadouts.append(loadoutName + ",");
 			}
-			loadoutsString += " loadout:" + loadoutColor + loadouts + normalColor;
+			loadoutsString.append(" loadout:" + loadoutColor + loadouts.toString() + normalColor);
 		}
 		
 		if (invs.hasReward()) {
-			loadoutsString += " reward:" + loadoutColor + "default" + normalColor;
+			loadoutsString.append(" reward:" + loadoutColor + "default" + normalColor);
 		}
 		
-		return loadoutsString;
+		return loadoutsString.toString();
 	}
 
 	public String printConfig(Warzone zone) {
@@ -578,28 +614,28 @@ public class War extends JavaPlugin {
 		ChatColor authorColor = ChatColor.GREEN;
 		ChatColor normalColor = ChatColor.WHITE;
 		
-		String warzoneConfigStr = "";
+		StringBuffer warzoneConfigStr = new StringBuffer();
 		for (WarzoneConfig warzoneConfig : WarzoneConfig.values()) {
 			Object value = zone.getWarzoneConfig().getValue(warzoneConfig);
 			if (value != null) {
-				warzoneConfigStr += " " + warzoneConfig.toStringWithValue(value).replace(":", ":" + zoneColor) + normalColor;
+				warzoneConfigStr.append(" " + warzoneConfig.toStringWithValue(value).replace(":", ":" + zoneColor) + normalColor);
 			}
 		}
 		
-		String teamDefaultsStr = "";
-		teamDefaultsStr += getLoadoutsString( zone.getDefaultInventories());
+		StringBuffer teamDefaultsStr = new StringBuffer();
+		teamDefaultsStr.append(getLoadoutsString( zone.getDefaultInventories()));
 		for (TeamConfig teamConfig : TeamConfig.values()) {
 			Object value = zone.getTeamDefaultConfig().getValue(teamConfig);
 			if (value != null) {
-				teamDefaultsStr += " " + teamConfig.toStringWithValue(value).replace(":", ":" + teamColor) + normalColor;
+				teamDefaultsStr.append(" " + teamConfig.toStringWithValue(value).replace(":", ":" + teamColor) + normalColor);
 			}
 		}
 		
 		return "::" + zoneColor + "Warzone " + authorColor + zone.getName() + zoneColor + " config" + normalColor + "::" 
 		 + " author:" + authorColor + ifEmptyEveryone(zone.getAuthorsString()) + normalColor
-		 + ifEmptyInheritedForWarzone(warzoneConfigStr)
+		 + ifEmptyInheritedForWarzone(warzoneConfigStr.toString())
 		 + " ::" + teamColor + "Team defaults" + normalColor + "::"
-		 + ifEmptyInheritedForWarzone(teamDefaultsStr);
+		 + ifEmptyInheritedForWarzone(teamDefaultsStr.toString());
 	}
 	
 	private String ifEmptyInheritedForWarzone(String maybeEmpty) {
@@ -630,25 +666,25 @@ public class War extends JavaPlugin {
 		ChatColor globalColor = ChatColor.DARK_GREEN;
 		ChatColor normalColor = ChatColor.WHITE;
 		
-		String warConfigStr = "";
+		StringBuffer warConfigStr = new StringBuffer();
 		for (WarConfig warConfig : WarConfig.values()) {
-			warConfigStr += " " + warConfig.toStringWithValue(this.getWarConfig().getValue(warConfig)).replace(":", ":" + globalColor) + normalColor;
+			warConfigStr.append(" " + warConfig.toStringWithValue(this.getWarConfig().getValue(warConfig)).replace(":", ":" + globalColor) + normalColor);
 		}
 		
-		String warzoneDefaultsStr = "";
+		StringBuffer warzoneDefaultsStr = new StringBuffer();
 		for (WarzoneConfig warzoneConfig : WarzoneConfig.values()) {
-			warzoneDefaultsStr += " " + warzoneConfig.toStringWithValue(this.getWarzoneDefaultConfig().getValue(warzoneConfig)).replace(":", ":" + zoneColor) + normalColor;
+			warzoneDefaultsStr.append(" " + warzoneConfig.toStringWithValue(this.getWarzoneDefaultConfig().getValue(warzoneConfig)).replace(":", ":" + zoneColor) + normalColor);
 		}
 		
-		String teamDefaultsStr = "";
-		teamDefaultsStr += getLoadoutsString(this.getDefaultInventories());
+		StringBuffer teamDefaultsStr = new StringBuffer();
+		teamDefaultsStr.append(getLoadoutsString(this.getDefaultInventories()));
 		for (TeamConfig teamConfig : TeamConfig.values()) {
-			teamDefaultsStr += " " + teamConfig.toStringWithValue(this.getTeamDefaultConfig().getValue(teamConfig)).replace(":", ":" + teamColor) + normalColor;
+			teamDefaultsStr.append(" " + teamConfig.toStringWithValue(this.getTeamDefaultConfig().getValue(teamConfig)).replace(":", ":" + teamColor) + normalColor);
 		}
 		
-		return normalColor + "::" + globalColor + "War config" + normalColor + "::" + warConfigStr  
-			+ normalColor + " ::" + zoneColor + "Warzone defaults" + normalColor + "::" + warzoneDefaultsStr
-			+ normalColor + " ::" + teamColor + "Team defaults" + normalColor + "::" + teamDefaultsStr; 
+		return normalColor + "::" + globalColor + "War config" + normalColor + "::" + warConfigStr.toString()  
+			+ normalColor + " ::" + zoneColor + "Warzone defaults" + normalColor + "::" + warzoneDefaultsStr.toString()
+			+ normalColor + " ::" + teamColor + "Team defaults" + normalColor + "::" + teamDefaultsStr.toString(); 
 	}
 
 	private void setZoneRallyPoint(String warzoneName, Player player) {

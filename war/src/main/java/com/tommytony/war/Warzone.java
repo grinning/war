@@ -159,20 +159,21 @@ public class Warzone {
 	}
 
 	public String getTeamInformation() {
-		String teamsMessage = "Teams: ";
+		StringBuffer teamsMessage = new StringBuffer();
+		teamsMessage.append("Teams: ");
 		if (this.getTeams().isEmpty()) {
-			teamsMessage += "none.";
+			teamsMessage.append("none.");
 		} else {
 			for (Team team : this.getTeams()) {
-				teamsMessage += team.getName() + " (" + team.getPoints() + " points, " + team.getRemainingLifes() + "/" 
-					+ team.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL) + " lives left. ";
+				teamsMessage.append( team.getName() + " (" + team.getPoints() + " points, " + team.getRemainingLifes() + "/" 
+					+ team.getTeamConfig().resolveInt(TeamConfig.LIFEPOOL) + " lives left. ");
 				for (Player member : team.getPlayers()) {
-					teamsMessage += member.getName() + " ";
+					teamsMessage.append(member.getName() + " ");
 				}
-				teamsMessage += ")  ";
+				teamsMessage.append(")  ");
 			}
 		}
-		return teamsMessage;
+		return teamsMessage.toString();
 	}
 
 	public String getName() {
@@ -900,7 +901,7 @@ public class Warzone {
 			int remaining = playerTeam.getRemainingLifes();
 			if (remaining == 0) { // your death caused your team to lose
 				List<Team> teams = playerWarzone.getTeams();
-				String scores = "";
+				StringBuffer scores = new StringBuffer();
 				for (Team t : teams) {
 					if (War.war.isSpoutServer()) {
 						for (Player p : t.getPlayers()) {
@@ -924,7 +925,7 @@ public class Warzone {
 							t.addPoint();
 							t.resetSign();
 						}
-						scores += t.getName() + "(" + t.getPoints() + "/" + t.getTeamConfig().resolveInt(TeamConfig.MAXSCORE) + ") ";
+						scores.append(t.getName() + "(" + t.getPoints() + "/" + t.getTeamConfig().resolveInt(TeamConfig.MAXSCORE) + ") ");
 					}
 				}
 				if (!scores.equals("")) {
@@ -940,14 +941,14 @@ public class Warzone {
 					}
 				}
 				if (!scoreCapTeams.isEmpty()) {
-					String winnersStr = "";
+					StringBuffer winnersStr = new StringBuffer();
 					for (Team winner : scoreCapTeams) {
 						if (winner.getPlayers().size() != 0) {
-							winnersStr += winner.getName() + " ";
+							winnersStr.append(winner.getName() + " ");
 						}
 					}
 
-					playerWarzone.handleScoreCapReached(player, winnersStr);
+					playerWarzone.handleScoreCapReached(player, winnersStr.toString());
 					// player.teleport(playerWarzone.getTeleport());
 					// player will die because it took too long :(
 					// we dont restore his inventory in handleScoreCapReached
@@ -1348,11 +1349,11 @@ public class Warzone {
 	}
 
 	public String getAuthorsString() {
-		String authors = "";
+		StringBuffer authors = new StringBuffer();
 		for (String author : this.getAuthors()) {
-			authors += author + ",";
+			authors.append(author + ",");
 		}
-		return authors;
+		return authors.toString();
 	}
 
 	public void equipPlayerLoadoutSelection(Player player, Team playerTeam, boolean isFirstRespawn, boolean isToggle) {

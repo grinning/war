@@ -499,6 +499,10 @@ public class WarEntityListener implements Listener {
 		if (entity instanceof Player) {
 			Player player = (Player) entity;
 			Team team = Team.getTeamByPlayerName(player.getName());
+			if(event.getCause() == DamageCause.PROJECTILE || event.getCause()
+					== DamageCause.ENTITY_ATTACK) {
+				player.setFireTicks(0);
+			}
 			if (team != null && team.getSpawnVolume().contains(player.getLocation())) {
 				// smother out the fire that didn't burn out when you respawned
 				// Stop fire (upcast, watch out!)
