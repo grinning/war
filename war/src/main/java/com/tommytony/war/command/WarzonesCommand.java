@@ -23,21 +23,22 @@ public class WarzonesCommand extends AbstractWarCommand {
 		if (this.args.length != 0) {
 			return false;
 		}
-		String warzonesMessage = "Warzones: ";
+		StringBuffer warzonesMessage = new StringBuffer();
+		warzonesMessage.append("Warzones: ");
 		if (War.war.getWarzones().isEmpty()) {
-			warzonesMessage += "none.";
+			warzonesMessage.append("none.");
 		} else {
 			for (Warzone warzone : War.war.getWarzones()) {
-				warzonesMessage += warzone.getName() + " (" + warzone.getTeams().size() + " teams, ";
+				warzonesMessage.append(warzone.getName() + " (" + warzone.getTeams().size() + " teams, ");
 				int playerTotal = 0;
 				for (Team team : warzone.getTeams()) {
 					playerTotal += team.getPlayers().size();
 				}
-				warzonesMessage += playerTotal + " players) ";
+				warzonesMessage.append(playerTotal + " players) ");
 			}
 		}
 
-		this.msg(warzonesMessage + ((this.getSender() instanceof Player) ? " Use /zone <zone-name> to teleport to a warzone." : ""));
+		this.msg(warzonesMessage.toString() + ((this.getSender() instanceof Player) ? " Use /zone <zone-name> to teleport to a warzone." : ""));
 
 		return true;
 	}

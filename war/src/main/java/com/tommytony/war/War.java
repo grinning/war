@@ -1029,4 +1029,13 @@ public class War extends JavaPlugin {
 		this.zoneMakersImpersonatingPlayers.clear();
 		this.playerStats.clear();
 	}
+	
+	public boolean getJava7() {
+		String[] parseStack = new String[4];
+		parseStack = System.getProperty("java.version").split(".");
+		if(parseStack[0].equals("1") && parseStack[1].equals("7")) {
+			return true;
+		}
+		return false;
+	}
 }

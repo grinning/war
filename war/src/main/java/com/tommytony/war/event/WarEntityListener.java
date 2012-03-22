@@ -63,6 +63,7 @@ import com.tommytony.war.utility.PlayerStat;
 public class WarEntityListener implements Listener {
 
 	private final Random killSeed = new Random();
+	private final ThreadLocalRandom java7KillSeed = new ThreadLocalRandom();
 			
 	/**
 	 * Handles PVP-Damage
@@ -161,6 +162,18 @@ public class WarEntityListener implements Listener {
 							if (killerWeapon == Material.AIR) {
 								weaponString = "hand";
 							} else if (killerWeapon == Material.BOW || event.getDamager() instanceof Arrow) {
+								if(War.war.getJava7) {
+									//if we have java7 installed then we can optimize the random number gen
+									int rand = java7KillSeed.nextInt(0, 3);
+									if(rand == 0) {
+										weaponString = "arrow";
+									} else if(rand == 1) {
+										weaponString = "bow";
+									} else {
+										weaponString = "aim";
+									}
+								} else {
+								
 								int rand = killSeed.nextInt(3);
 								if (rand == 0) {
 									weaponString = "arrow";
@@ -169,14 +182,21 @@ public class WarEntityListener implements Listener {
 								} else {
 									weaponString = "aim";
 								}
+							  }
 								
 							} else if (event.getDamager() instanceof Projectile) {
 								weaponString = "aim";
 							}
-							
-							String adjectiveString = War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
-							String verbString = War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
-							
+							String adjectiveString;
+							String verbString;
+							if(War.war.getJava7) {
+							  //java7 is go, we can optimize
+							    adjectiveString = War.war.getDeadlyAdjectives().get(this.java7KillSeed.nextInt(0, War.war.getDeadlyAdjectives().size()));
+							    verbString = War.war.getKillerVerbs().get(this.java7KillSeed.nextInt(0, War.war.getKillerVerbs().size()));
+							} else {
+							  adjectiveString = War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
+							  verbString = War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
+							}
 							killMessage = attackerString + ChatColor.WHITE + "'s " + adjectiveString + weaponString.toLowerCase().replace('_', ' ') 
 													+ " " + verbString + " " + defenderString;
 						} else {
