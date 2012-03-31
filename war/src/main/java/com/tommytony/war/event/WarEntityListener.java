@@ -63,7 +63,9 @@ import com.tommytony.war.utility.PlayerStat;
 public class WarEntityListener implements Listener {
 
 	private final Random killSeed = new Random();
+
 	private final ThreadLocalRandom java7KillSeed = new ThreadLocalRandom();
+	
 			
 	/**
 	 * Handles PVP-Damage
@@ -162,7 +164,7 @@ public class WarEntityListener implements Listener {
 							if (killerWeapon == Material.AIR) {
 								weaponString = "hand";
 							} else if (killerWeapon == Material.BOW || event.getDamager() instanceof Arrow) {
-								if(War.war.getJava7) {
+								if(War.java7) {
 									//if we have java7 installed then we can optimize the random number gen
 									int rand = java7KillSeed.nextInt(0, 3);
 									if(rand == 0) {
@@ -189,7 +191,7 @@ public class WarEntityListener implements Listener {
 							}
 							String adjectiveString;
 							String verbString;
-							if(War.war.getJava7) {
+							if(War.java7) {
 							  //java7 is go, we can optimize
 							    adjectiveString = War.war.getDeadlyAdjectives().get(this.java7KillSeed.nextInt(0, War.war.getDeadlyAdjectives().size()));
 							    verbString = War.war.getKillerVerbs().get(this.java7KillSeed.nextInt(0, War.war.getKillerVerbs().size()));

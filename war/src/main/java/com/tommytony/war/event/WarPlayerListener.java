@@ -64,6 +64,7 @@ import com.tommytony.war.utility.PlayerStat;
  */
 public class WarPlayerListener implements Listener {
 	private java.util.Random random = new java.util.Random();
+	private java.util.ThreadLocalRandom java7Random = new java.util.ThreadLocalRandom();
 	private HashMap<String, Location> latestLocations = new HashMap<String, Location>(); 
 
 	/**
@@ -645,23 +646,14 @@ public class WarPlayerListener implements Listener {
 
 			// Monuments
 			if (playerTeam != null && playerWarzone.nearAnyOwnedMonument(playerLoc, playerTeam) && player.getHealth() < 20 && player.getHealth() > 0 // don't heal the dead
-					&& this.random.nextInt(7) == 3) { // one chance out of many of getting healed
-				int currentHp = player.getHealth();
-				int newHp = Math.min(20, currentHp + locZone.getWarzoneConfig().getInt(WarzoneConfig.MONUMENTHEAL));
-
-				player.setHealth(newHp);
-				String isS = "s";
-				String heartNum = ""; // since (newHp-currentHp)/2 won't give the right amount
-				if (newHp - currentHp == 2) { // no 's' in 'hearts' when it's just one heart
-					isS = "";
-					heartNum = "one ";
-				} else if (newHp - currentHp % 2 == 0) {
-					heartNum = ((newHp - currentHp) / 2) + " ";
-				} else {
-					heartNum = ((newHp - currentHp - 1) / 2) + ".5 ";
-				}
-				War.war.msg(player, "Your dance pleases the monument's voodoo. You gain " + heartNum + "heart" + isS + "!");
-				return;
+					) { // one chance out of many of getting healed
+				if(War.java7 && this.java7Random.nextInt(0, 7)) {
+					this.monumentHeal(player);
+					return;
+				} else if(this.random.nextInt(7) == 3) {
+				    this.monumentHeal(player);
+				    return;
+				} 
 			}
 			
 			//Resupplies
@@ -1024,6 +1016,25 @@ public class WarPlayerListener implements Listener {
 				War.war.log("Could not remove player " + player.getName() + " from team " + previousTeam.getName(), java.util.logging.Level.WARNING);
 			}
 		}
+	}
+	
+	private void monumentHeal(Player player) {
+		int currentHp = player.getHealth();
+		
+		int newHp = Math.min(20, currentHp + Warzone.getZoneByLocation(player).getWarzoneConfig().getInt(WarzoneConfig.MONUMENTHEAL));
+
+		player.setHealth(newHp);
+		String isS = "s";
+		String heartNum = ""; // since (newHp-currentHp)/2 won't give the right amount
+		if (newHp - currentHp == 2) { // no 's' in 'hearts' when it's just one heart
+			isS = "";
+			heartNum = "one ";
+		} else if (newHp - currentHp % 2 == 0) {
+			heartNum = ((newHp - currentHp) / 2) + " ";
+		} else {
+			heartNum = ((newHp - currentHp - 1) / 2) + ".5 ";
+		}
+		War.war.msg(player, "Your dance pleases the monument's voodoo. You gain " + heartNum + "heart" + isS + "!");
 	}
 	
 }
