@@ -33,6 +33,7 @@ import com.tommytony.war.config.TeamConfigBag;
 import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.config.WarzoneConfigBag;
+import com.tommytony.war.exceptions.WarzoneException;
 import com.tommytony.war.job.CalculateRespawnPointJob;
 import com.tommytony.war.job.DominationMonumentTimerJob;
 import com.tommytony.war.job.InitZoneJob;
@@ -224,6 +225,7 @@ public class Warzone {
 			}
 			return saved;
 		}
+		
 		return 0;
 	}
 
@@ -538,6 +540,9 @@ public class Warzone {
 	}
 
 	public void restorePlayerState(Player player) {
+		if(player == null) {
+			throw new WarzoneException(543, "Warzone.java");
+		}
 		PlayerState originalState = this.playerStates.remove(player.getName());
 		PlayerInventory playerInv = player.getInventory();
 		if (originalState != null) {
@@ -558,6 +563,9 @@ public class Warzone {
 	}
 
 	private void playerInvFromInventoryStash(PlayerInventory playerInv, PlayerState originalContents) {
+		if((playerInv == null) || (originalContents == null)) {
+			throw new WarzoneException(568, "Warzone.java");
+		}
 		playerInv.clear();
 		playerInv.clear(playerInv.getSize() + 0);
 		playerInv.clear(playerInv.getSize() + 1);
