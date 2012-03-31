@@ -112,8 +112,11 @@ public class War extends JavaPlugin {
 	private CLPlatform platform;
 	private CLCommandQueue clCommands;
 	//CL Buffer space
-	
+    
 	private CLMem aBuf;
+	
+	//Runtime Notes
+	public static boolean java7;
 	
 	public War() {
 		super();
@@ -274,7 +277,37 @@ public class War extends JavaPlugin {
 		File statsDir = new File("plugins" + sep + "war" + sep + "stats");
 		statsDir.mkdir();
 				
+		//Get Runtime Information
+		
 		this.log("War v" + this.desc.getVersion() + " is on.", Level.INFO);
+		this.log("War detects " + Runtime.getRuntime().availableProcessors() + " processors.", Level.INFO);
+		this.log("War detects " + System.getProperty("os.name") + " operating system.", Level.INFO);
+		
+		if(System.getProperty("os.name").equals("Mac OS X")) {
+			Runtime.getRuntime().loadLibrary("src/main/resources/macosx/liblwjgl.jnilib");
+		} else if(System.getProperty("os.name").contains("Windows")) {
+			if(!System.getProperty("os.arch").equals("x86_64")) {
+				Runtime.getRuntime().loadLibrary("src\\main\\resources\\windows\\lwjgl.dll");
+			} else {
+				Runtime.getRuntime().loadLibrary("src\\main\\resources\\windows\\lwjgl64.dll");
+			}
+		} else if(System.getProperty("os.name").equals("Linux")) {
+			if(!System.getProperty("os.arch").equals("x86_64")) {
+				Runtime.getRuntime().loadLibrary("src/main/resources/linux/liblwjgl.so");
+			} else {
+				Runtime.getRuntime().loadLibrary("src/main/resources/linux/liblwjgl64.so");
+			}
+		} else if(System.getProperty("os.name").equals("Solaris")) {
+			if(!System.getProperty("os.arch").equals("x86_64")) {
+				Runtime.getRuntime().loadLibrary("src/main/resources/solaris/liblwjgl.so");
+			} else {
+				Runtime.getRuntime().loadLibrary("src/main/resources/solaris/liblwjgl64.so");
+				
+			}
+		}
+		
+		
+		java7 = this.getJava7();
 		
 		//init openCL and get devices
 		try {
@@ -328,6 +361,8 @@ public class War extends JavaPlugin {
 		
 		//garbage collect
 		System.gc();
+		//make sure everything = cleaned
+		Runtime.getRuntime().runFinalization();
 	}
 
 	/**

@@ -40,8 +40,8 @@
               <artifactId>maven-compiler-plugin</artifactId>
               <version>2.0.2</version>
               <configuration>
-                  <source>1.5</source>
-                  <target>1.5</target>
+                  <source>1.7</source>
+                  <target>1.7</target>
               </configuration>
           </plugin>
       </plugins>
@@ -53,7 +53,42 @@
           <includes>
             <include>plugin.yml</include>
           </includes>
-        </resource>    
+        </resource> 
+        <resource>
+        <targetPath>/src/main/resources/linux/</targetPath>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources/linux/</directory>
+        <includes>
+          <include>liblwjgl.so</include>
+          <include>liblwjgl64.so</include>
+        </includes>
+        </resource>
+        <resource>
+        <targetPath>/src/main/resources/macosx/</targetPath>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources/macosx/</directory>
+        <includes>
+          <include>liblwjgl.jnilib</include>
+        </includes>
+        </resource>  
+        <resource>
+        <targetPath>/src/main/rescources/windows/</targetPath>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources/windows/</directory>
+        <includes>
+          <include>lwjgl.dll</include>
+          <include>lwjgl64.dll</include>
+        </includes>
+        </resource> 
+        <resource>
+        <targetPath>/src/main/resources/solaris/</targetPath>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources/solaris/</directory>
+        <includes>
+          <include>liblwjgl.so</include>
+          <include>liblwjgl64.so</include>
+        </includes>
+        </resource>
       </resources>
   </build>
   <dependencies>
