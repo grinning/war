@@ -810,5 +810,29 @@ public class ZoneVolumeSpecTest {
 	// setCornerOne
 
 	// setCornerTwo
+	
+	@Test 
+	public void checkToLargeWhenResetingZone() {
+		World mockWorld = mock(World.class);
+		Warzone mockWarzone = mock(Warzone.class);
+		when(mockWarzone.getTeams()).thenReturn(new ArrayList<Team>());
+		when(mockWarzone.getMonuments()).thenReturn(new ArrayList<Monument>());
+		ZoneVolume volume = new ZoneVolume("test", mockWorld, mockWarzone);
+		Block blockMock = mock(Block.class);
+		when(blockMock.getX()).thenReturn(0);	
+		when(blockMock.getY()).thenReturn(64);	// at sea level
+		when(blockMock.getZ()).thenReturn(0);	
+		when(blockMock.getTypeId()).thenReturn(10);
+		when(blockMock.getData()).thenReturn((byte)2);
+		
+		Block blockcorner1 = mock(Block.class);
+		when(blockcorner1.getX()).thenReturn(1);
+		when(blockcorner1.getX()).thenReturn(62);
+		when(blockcorner1.getZ()).thenReturn(1);
+		volume.setCornerOne(blockMock);	// corner 1 already set
+		volume.setCornerTwo(blockcorner1);	// corner 2 already set
+	
+		assertTrue(volume.tooSmall()); //Now see if zone is too small
+	}
 
 }
