@@ -14,7 +14,7 @@ import com.tommytony.war.structure.Monument;
 
 public class DominationMonumentTimerJob implements Runnable {
 
-	private List<Monument> points = new ArrayList<Monument>();
+	private final List<Monument> points = new ArrayList<Monument>();
 	private final int sec;
 	private final Warzone zone;
 	private boolean winnerFound;

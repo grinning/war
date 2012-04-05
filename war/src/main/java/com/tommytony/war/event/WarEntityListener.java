@@ -154,7 +154,7 @@ public class WarEntityListener implements Listener {
 					}
 					
 					if (attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
-						String killMessage = "";
+						StringBuffer killMessage;
 						String attackerString = attackerTeam.getKind().getColor() + a.getName();
 						String defenderString = defenderTeam.getKind().getColor() + d.getName();
 						
@@ -199,14 +199,28 @@ public class WarEntityListener implements Listener {
 							  adjectiveString = War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
 							  verbString = War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
 							}
-							killMessage = attackerString + ChatColor.WHITE + "'s " + adjectiveString + weaponString.toLowerCase().replace('_', ' ') 
-													+ " " + verbString + " " + defenderString;
+							killMessage.append(attackerString).append(ChatColor.WHITE + "'s ").append(adjectiveString)
+							.append( weaponString.toLowerCase().replace('_', ' ')). 
+													append( " ").append( verbString).append( " ").append(defenderString);
 						} else {
-							killMessage = defenderString + ChatColor.WHITE + " committed accidental suicide";
+							killMessage.append(defenderString).append(ChatColor.WHITE + " committed accidental suicide");
 						}
 						
+						int aX = a.getLocation().getX();
+						int aY = a.getLocation().getY();
+						int aZ = a.getLocation().getZ();
+						int dX = d.getLocation().getX();
+						int dY = d.getLocation().getY();
+						int dZ = d.getLocation().getZ();
+						//dist form for 3d = SQRT((x1 - x2)^2 + (y1 - y2)^2 + (z1 - z2)^2)
+						int dist = (int) Math.sqrt(((aX - dX) * (aX - dX)) + ((aY - dY) * (aY - dY)) + ((aZ - dZ) * (aZ - dZ)));
+						
 						for (Team team : defenderWarzone.getTeams()) {
-							team.teamcast(killMessage);
+							if(weaponString.equals("bow") || weaponString.equals("aim") || weaponString.equals("arrow")) {
+								team.teamcast(killMessage.toString() + "From " + dist + " meters away!");
+							} else {
+							team.teamcast(killMessage.toString());
+							}
 						}
 					}
 					

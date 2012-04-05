@@ -7,8 +7,8 @@ import com.tommytony.war.Warzone;
 
 public class ZoneTimeJob implements Runnable {
 
-	private int sec;
-	private Warzone zone;
+	private final int sec;
+	private final Warzone zone;
 	
 	public ZoneTimeJob(int sec, Warzone zone) {
 		this.sec = sec; //Time in SECONDS

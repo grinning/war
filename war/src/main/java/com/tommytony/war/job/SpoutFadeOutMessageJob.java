@@ -5,6 +5,7 @@ import com.tommytony.war.War;
 public class SpoutFadeOutMessageJob implements Runnable {
 
 	public SpoutFadeOutMessageJob() {
+		super();
 	}
 
 	public void run() {

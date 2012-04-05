@@ -1073,4 +1073,21 @@ public class War extends JavaPlugin {
 		}
 		return false;
 	}
+	
+	//I was bored! Get player by their unique id | by name
+	public static <U> Player getPlayer(U u) {
+		if(u.getClass().toString().equals("java.lang.Integer")) {
+			for(org.getspout.commons.entity.Player p : Bukkit.getServer().getOnlinePlayers()) {
+				if(p.getEntityId() == Integer.parseInt(u.toString())) {
+					return p;
+				}
+			}
+		} else if(u.getClass().toString().equals("java.lang.String")) {
+			return Bukkit.getServer().getPlayer(u);
+		} else {
+			return null;
+		}
+	}
 }
+
+
