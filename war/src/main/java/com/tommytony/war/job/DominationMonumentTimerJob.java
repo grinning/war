@@ -14,12 +14,12 @@ import com.tommytony.war.structure.Monument;
 
 public class DominationMonumentTimerJob implements Runnable {
 
-	private final List<Monument> points = new ArrayList<Monument>();
+	private List<Monument> points = new ArrayList<Monument>();
 	private final int sec;
 	private final Warzone zone;
 	private boolean winnerFound;
 	
-	public DominationMonumentTimerJob(int sec, Warzone warzone) {
+	public DominationMonumentTimerJob(final int sec, final Warzone warzone) {
 		this.sec = sec;
 		this.zone = warzone;
 		this.points = this.zone.getMonuments();

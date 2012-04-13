@@ -57,6 +57,7 @@ import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.utility.ChatFixUtil;
+import com.tommytony.war.utility.OpenCLUtil;
 import com.tommytony.war.utility.PlayerStat;
 import com.tommytony.war.utility.PlayerState;
 
@@ -105,17 +106,9 @@ public class War extends JavaPlugin {
 	private final TeamConfigBag teamDefaultConfig = new TeamConfigBag();
 	private SpoutDisplayer spoutMessenger = null;
 	
-	//CL stuff
+	private OpenCLUtil cl;
 	
-	private CLContext context;
-	private List<CLDevice> gpus = new ArrayList<CLDevice>();
-	private CLPlatform platform;
-	private CLCommandQueue clCommands;
-	//CL Buffer space
-    
-	private CLMem aBuf;
-	
-	//Runtime Notes
+	//Runtime Info
 	public static boolean java7;
 	
 	public War() {
@@ -306,19 +299,10 @@ public class War extends JavaPlugin {
 			}
 		}
 		
+		this.cl = new OpenCLUtil();
 		
 		java7 = this.getJava7();
 		
-		//init openCL and get devices
-		try {
-			CL.create();
-			platform = CLPlatform.getPlatforms().get(0);
-			gpus = platform.getDevices(CL10.CL_DEVICE_TYPE_GPU);
-			context = CLContext.create(platform, gpus, null);
-			clCommands = CL10.clCreateCommandQueue(context, gpus.get(0), CL10.CL_QUEUE_PROFILING_ENABLE, null);
-		} catch (LWJGLException e) {
-			Bukkit.getServer().getLogger().log(Level.WARNING, "War> Dependency error!");
-		}
 	}
 
 	/**
@@ -354,10 +338,8 @@ public class War extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
-		//De initialize the openCL resources
-		CL10.clReleaseCommandQueue(clCommands);
-		CL10.clReleaseContext(context);
-		CL.destroy();
+		
+		this.cl.cleanUp();
 		
 		//garbage collect
 		System.gc();
@@ -1077,16 +1059,15 @@ public class War extends JavaPlugin {
 	//I was bored! Get player by their unique id | by name
 	public static <U> Player getPlayer(U u) {
 		if(u.getClass().toString().equals("java.lang.Integer")) {
-			for(org.getspout.commons.entity.Player p : Bukkit.getServer().getOnlinePlayers()) {
+			for(org.bukkit.entity.Player p : Bukkit.getServer().getOnlinePlayers()) {
 				if(p.getEntityId() == Integer.parseInt(u.toString())) {
 					return p;
 				}
 			}
 		} else if(u.getClass().toString().equals("java.lang.String")) {
-			return Bukkit.getServer().getPlayer(u);
-		} else {
-			return null;
-		}
+			return Bukkit.getServer().getPlayer((String) u);
+		} 
+		return null;
 	}
 }
 

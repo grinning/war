@@ -8,6 +8,7 @@
 
   <properties>
     <lwjgl.version>2.8.3</lwjgl.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
   <name>War</name>
@@ -20,6 +21,14 @@
 		<repository>
 		  <id>sk89q-mvn2</id>
 		  <url>http://mvn2.sk89q.com/repo</url>
+		 </repository>
+		 <repository>
+		   <id>repobo-rel</id>
+		   <url>http://repo.bukkit.org/content/repositories/releases/</url>
+		 </repository>
+		 <repository>
+		   <id>repobo-snap</id>
+		   <url>http://repo.bukkit.org/content/repositories/snapshots/</url>
 		 </repository>
     </repositories>
   <issueManagement>
@@ -95,7 +104,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.2.4-R1.0</version>
+      <version>1.1-R6</version>
       <type>pom</type>
     </dependency>
     <dependency>
