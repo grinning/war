@@ -52,6 +52,7 @@ import com.tommytony.war.job.DeferredBlockResetsJob;
 import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.Bomb;
 import com.tommytony.war.utility.DeferredBlockReset;
+import com.tommytony.war.utility.Java6RandomThreadWrapper;
 import com.tommytony.war.utility.PlayerStat;
 
 /**
@@ -65,6 +66,7 @@ public class WarEntityListener implements Listener {
 	private final Random killSeed = new Random();
 
 	private final ThreadLocalRandom java7KillSeed = new ThreadLocalRandom();
+	private final Java6RandomThreadWrapper java6KillSeed = new Java6RandomThreadWrapper();
 	
 			
 	/**
@@ -176,7 +178,7 @@ public class WarEntityListener implements Listener {
 									}
 								} else {
 								
-								int rand = killSeed.nextInt(3);
+								int rand = java6KillSeed.nextRandomInt(3);
 								if (rand == 0) {
 									weaponString = "arrow";
 								} else if (rand == 1) {
@@ -206,12 +208,12 @@ public class WarEntityListener implements Listener {
 							killMessage.append(defenderString).append(ChatColor.WHITE + " committed accidental suicide");
 						}
 						
-						int aX = a.getLocation().getX();
-						int aY = a.getLocation().getY();
-						int aZ = a.getLocation().getZ();
-						int dX = d.getLocation().getX();
-						int dY = d.getLocation().getY();
-						int dZ = d.getLocation().getZ();
+						int aX = (int) a.getLocation().getX();
+						int aY = (int) a.getLocation().getY();
+						int aZ = (int) a.getLocation().getZ();
+						int dX = (int) d.getLocation().getX();
+						int dY = (int) d.getLocation().getY();
+						int dZ = (int) d.getLocation().getZ();
 						//dist form for 3d = SQRT((x1 - x2)^2 + (y1 - y2)^2 + (z1 - z2)^2)
 						int dist = (int) Math.sqrt(((aX - dX) * (aX - dX)) + ((aY - dY) * (aY - dY)) + ((aZ - dZ) * (aZ - dZ)));
 						

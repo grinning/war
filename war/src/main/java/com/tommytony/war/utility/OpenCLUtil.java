@@ -36,8 +36,8 @@ public class OpenCLUtil {
 	private CLMem bBuf;
 	
 	//constants
-	public static final byte WAR_CL_A_BUFFER = 0x1E;
-	public static final byte WAR_CL_B_BUFFER = 0x1F;
+	public static final byte WAR_CL_A_BUFFER = 0x1E; //29
+	public static final byte WAR_CL_B_BUFFER = 0x1F; //30
 	
 	/*<CL Functions>*/
 	final String addFunc =
