@@ -17,7 +17,7 @@ import com.tommytony.war.structure.Monument;
 
 public class WarNPC  {
 
-	private transient HumanEntity npc;
+	private HumanEntity npc;
 	
 	public WarNPC(HumanEntity npc) {
 		this.npc = npc;
@@ -61,6 +61,23 @@ public class WarNPC  {
 		for(Player player: Bukkit.getServer().getOnlinePlayers()) {
 			if(this.checkLoc(player.getLocation())) {
 				player.damage(5); //2.5 hearts
+			}
+		}
+	}
+	
+	public void shootArrow(Player p) {
+		double distForm = this.distanceFormula(this.npc.getEyeLocation(), p.getEyeLocation());
+		if(distForm < 17.0) {
+			Arrow a = this.npc.shootArrow();
+			return;
+		} else if(distForm > 17.0) {
+			Location a = this.npc.getEyeLocation();
+			a.setPitch(this.npc.getEyeLocation().getPitch() + 3.0F);
+			if(this.npc.teleport(a)) {
+				this.npc.shootArrow();
+				return;
+			} else {
+				return;
 			}
 		}
 	}
@@ -160,5 +177,11 @@ public class WarNPC  {
 	
 	public HumanEntity getNpc() {
 	    return this.npc;	
+	}
+	
+	public double distanceFormula(Location loc1, Location loc2) {
+		return Math.sqrt(((loc1.getX() - loc2.getX()) * (loc1.getX() - loc2.getX())) + (
+				(loc1.getY() - loc2.getY()) * (loc1.getY() - loc2.getY())) + ((loc1.getZ() -
+						loc2.getZ()) * (loc1.getZ() - loc2.getZ())));
 	}
 }

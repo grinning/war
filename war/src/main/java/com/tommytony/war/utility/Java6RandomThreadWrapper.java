@@ -18,6 +18,8 @@ public class Java6RandomThreadWrapper implements Cloneable {
 				return Integer.valueOf(new Random().nextInt());
 			}
 		});
+		while(!result.isDone());
+		
 		return result.get().intValue();
 	}
 	
@@ -28,6 +30,8 @@ public class Java6RandomThreadWrapper implements Cloneable {
 				return Integer.valueOf(new Random().nextInt(max));
 			}
 		});
+		while(!result.isDone());//if the result is attempted to be recieved when it isn't done. Main Thread will pause execution
+		
 		return result.get().intValue();
 	}
 	
