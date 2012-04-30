@@ -38,6 +38,8 @@ public class Java6RandomThreadWrapper implements Cloneable {
 	
 	
 	
+	
+	
 	@Override
 	public Java6RandomThreadWrapper clone() {
 		return this;

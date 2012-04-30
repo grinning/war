@@ -121,7 +121,7 @@ public class WarCommandHandler {
 				commandObj = new ZoneMakerCommand(this, sender, arguments);
 			} else if (command.equals("warstats") || command.equals("wstats")) {
 				commandObj = new GetStatsCommand(this, sender, arguments);
-			}
+			} 
 			// we are not responsible for any other command
 		} catch (NotWarAdminException e) {
 			War.war.badMsg(sender, "You can't do this if you are not a War admin (permission war.admin).");

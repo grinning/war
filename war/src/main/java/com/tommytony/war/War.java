@@ -482,6 +482,10 @@ public class War extends JavaPlugin {
 				}
 			}
 			
+			if(namedParams.containsKey("rename")) {
+				warzone.setName(namedParams.get("rename"));
+			}
+			
 			returnMessage.append(warzone.getWarzoneConfig().updateFromNamedParams(namedParams));
 			returnMessage.append(warzone.getTeamDefaultConfig().updateFromNamedParams(namedParams));
 

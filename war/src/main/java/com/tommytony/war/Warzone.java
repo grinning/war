@@ -1481,4 +1481,8 @@ public class Warzone {
 	public List<Player> getKillStreakPeople() {
 		return this.killStreak5;
 	}
+	
+	public void setName(String string) {
+		this.name = string;
+	}
 }
