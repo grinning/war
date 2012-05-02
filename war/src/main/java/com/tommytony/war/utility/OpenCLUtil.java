@@ -11,8 +11,11 @@ import org.lwjgl.opencl.CL10;
 import org.lwjgl.opencl.CLCommandQueue;
 import org.lwjgl.opencl.CLContext;
 import org.lwjgl.opencl.CLDevice;
+import org.lwjgl.opencl.CLKernel;
 import org.lwjgl.opencl.CLMem;
 import org.lwjgl.opencl.CLPlatform;
+import org.lwjgl.opencl.CLProgram;
+import org.lwjgl.opencl.Util;
 
 public class OpenCLUtil {
 
@@ -36,11 +39,15 @@ public class OpenCLUtil {
 	private CLMem bBuf;
 	
 	//constants
-	public static final byte WAR_CL_A_BUFFER = 0x1E; //29
-	public static final byte WAR_CL_B_BUFFER = 0x1F; //30
+	public static final byte WAR_CL_BUFFER_A = 0x1E; //29
+	public static final byte WAR_CL_BUFFER_B = 0x1F; //30
+	
+	public static final int WAR_CL_FUNC_ADD = 47;
+	public static final int WAR_CL_FUNC_LOOKATYAW = 48;
+	public static final int WAR_CL_FUNC_LOOKATPITCH = 49;
 	
 	/*<CL Functions>*/
-	final String addFunc =
+	private final String addFunc =
 			"kernel void "
 			+ "sum(global const double *a, "
 			+ "global const double *b, "
@@ -49,7 +56,7 @@ public class OpenCLUtil {
 			+ "answer[vec] = a[vec] + b[vec];" 
 			+ "}";
 	
-	final String lookAtFuncYaw =
+	private final String lookAtFuncYaw =
 			"kernel void "
 			+ "lookAtYaw(global const double *a, "
 			+ "global const double *b, "
@@ -58,7 +65,7 @@ public class OpenCLUtil {
 			+ "answer[vec] = acos((a[vec] / b[vec]) * 180 / " +
 			"3.1415926); }";
 	
-	final String lookAtFuncPitch = 
+	private final String lookAtFuncPitch = 
 			"kernel void "
 			+ "lookAtPitch(global const double *a, " +
 			"global const double *b, " +
@@ -95,13 +102,31 @@ public class OpenCLUtil {
 	}
 	
 	public void setBuffer(double[] array, byte type) {
-		if(type == OpenCLUtil.WAR_CL_A_BUFFER) {
+		if(type == OpenCLUtil.WAR_CL_BUFFER_A) {
 			this.a = DoubleBuffer.wrap(array);
-		} else if(type == OpenCLUtil.WAR_CL_B_BUFFER) {
+		} else if(type == OpenCLUtil.WAR_CL_BUFFER_B) {
 			this.b = DoubleBuffer.wrap(array);
 		} else {
 			throw new NullPointerException();
 		}
+	}
+	
+	public CLKernel createKernel(int type) {
+		String progString = "";
+		if(type == OpenCLUtil.WAR_CL_FUNC_ADD) {
+			progString = this.addFunc;
+		} else if(type == OpenCLUtil.WAR_CL_FUNC_LOOKATPITCH) {
+			progString = this.lookAtFuncPitch;
+		} else if(type == OpenCLUtil.WAR_CL_FUNC_LOOKATYAW) {
+			progString = this.lookAtFuncYaw;
+		} else {
+			throw new RuntimeException();
+		}
+		
+		CLProgram prog = CL10.clCreateProgramWithSource(context, progString, null);
+		Util.checkCLError(CL10.clBuildProgram(prog, gpu, "", null));
+		CLKernel kernel = CL10.clCreateKernel(prog, "sum", null);
+		return kernel;
 	}
 	
 	

@@ -8,9 +8,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import com.tommytony.war.Warzone;
 import com.tommytony.war.structure.Monument;
@@ -47,6 +45,7 @@ public class WarNPC  {
 		this.lookAt(player.getLocation());
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void fireArrow(Entity target) {
 		Arrow arrow = npc.shootArrow();
 		arrow.setShooter(this.npc);
@@ -65,10 +64,10 @@ public class WarNPC  {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void shootArrow(Player p) {
 		double distForm = this.distanceFormula(this.npc.getEyeLocation(), p.getEyeLocation());
 		if(distForm < 17.0) {
-			Arrow a = this.npc.shootArrow();
 			return;
 		} else if(distForm > 17.0) {
 			Location a = this.npc.getEyeLocation();
