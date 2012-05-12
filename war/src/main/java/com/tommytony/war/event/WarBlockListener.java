@@ -330,8 +330,9 @@ public class WarBlockListener implements Listener {
 										}
 									}
 								}
-								t.teamcast("Prevent " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
-										+ " from reaching team " + team.getName() + "'s " + spawnOrFlag + ".");
+								t.teamcast(new StringBuilder("Prevent ").append(team.getKind().getColor().getChar()).append(
+										player.getName()).append(ChatColor.WHITE.getChar()).append(" from reaching team "). //faster, less strain on GC
+										append(team.getName()).append("'s ").append(spawnOrFlag).append('.').toString());
 							}
 						}
 
@@ -363,6 +364,7 @@ public class WarBlockListener implements Listener {
 					warzone.addBombThief(bomb, player.getName());
 					block.setType(Material.AIR);
 
+					String message = null;
 					for (Team t : warzone.getTeams()) {
 						t.teamcast(team.getKind().getColor() + player.getName() + ChatColor.WHITE + " has bomb " + ChatColor.GREEN + bomb.getName() + ChatColor.WHITE + ".");
 						
@@ -379,18 +381,16 @@ public class WarBlockListener implements Listener {
 								}
 							}
 						}
-						
-						if(Team.getTeamByPlayerName(player.getDisplayName()).equals(team)) {
-                            t.teamcast("Help " + team.getKind().getColor() + player.getName() + ChatColor.WHITE 
-                            		+ " reach the opposing teams spawn!");
-						} else {
-						    t.teamcast("Prevent " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
-								+ " from reaching your spawn with the bomb!");
-						}
+						//basically a faster, more readable version of "if...else..." code that had regular string objects
+						message = (Team.getTeamByPlayerName(player.getDisplayName()).equals(team)) ? //added the ternary statement
+								new StringBuilder().append("Help ").append(team.getKind().getColor().getChar()).
+								append(player.getName()).append(ChatColor.WHITE.getChar()).append(" reach the opposing teams spawn!")
+								.toString(): new StringBuilder().append("Prevent ").append(team.getKind().getColor().getChar()).append(
+										player.getName()).append(ChatColor.WHITE.getChar()).append(" from reaching your spawn with the bomb!").
+										toString();
+						t.teamcast(message);
 					}
-
-
-					War.war.msg(player, "You have bomb " + bomb.getName() + ". Reach another team's spawn to score. Don't get touched by anyone or you'll blow up!");
+					War.war.msg(player, new StringBuilder().append("You have bomb ").append(bomb.getName()).append(". Reach another team's spawn to score. Don't get touched by anyone or you'll blow up!").toString());
 				}
 				
 				event.setCancelled(true);
@@ -414,7 +414,7 @@ public class WarBlockListener implements Listener {
 					player.getInventory().addItem(cakeBlock);
 					warzone.addCakeThief(cake, player.getName());
 					block.setType(Material.AIR);
-
+                    String message = null; //have fun in the .bss section!
 					for (Team t : warzone.getTeams()) {
 						t.teamcast(team.getKind().getColor() + player.getName() + ChatColor.WHITE + " has cake " + ChatColor.GREEN + cake.getName() + ChatColor.WHITE + ".");
 						
@@ -431,15 +431,13 @@ public class WarBlockListener implements Listener {
 								}
 							}
 						}
+						message = Team.getTeamByPlayerName(player.getDisplayName()).equals(t) ?
+								new StringBuilder().append("Help ").append(team.getKind().getColor().getChar()).append(player.getName()).
+								append(ChatColor.WHITE.getChar()).append(" reach your spawn with the cake!").toString(): new StringBuilder()
+								.append("Prevent ").append(team.getKind().getColor().getChar()).append(player.getName()).append(ChatColor.WHITE.getChar())
+								.append(" from reaching their spawn with the cake!").toString();
 						
-						if(Team.getTeamByPlayerName(player.getDisplayName()).equals(t)) {
-						t.teamcast("Help " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
-								+ " reach your spawn with the cake!");
-						} else {
-						t.teamcast("Prevent " + team.getKind().getColor() + player.getName() + ChatColor.WHITE
-								+ " from reaching their spawn with the cake!");
-					}
-
+						t.teamcast(message);
 
 					War.war.msg(player, "You have cake " + cake.getName() + ". Reach your team's spawn to score and replenish your lifepool.");
 				}

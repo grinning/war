@@ -47,7 +47,7 @@ public class OpenCLUtil {
 	public static final int WAR_CL_FUNC_LOOKATPITCH = 49;
 	
 	/*<CL Functions>*/
-	private final String addFunc =
+	private final static String addFunc =
 			"kernel void "
 			+ "sum(global const double *a, "
 			+ "global const double *b, "
@@ -56,7 +56,7 @@ public class OpenCLUtil {
 			+ "answer[vec] = a[vec] + b[vec];" 
 			+ "}";
 	
-	private final String lookAtFuncYaw =
+	private final static String lookAtFuncYaw =
 			"kernel void "
 			+ "lookAtYaw(global const double *a, "
 			+ "global const double *b, "
@@ -65,7 +65,7 @@ public class OpenCLUtil {
 			+ "answer[vec] = acos((a[vec] / b[vec]) * 180 / " +
 			"3.1415926); }";
 	
-	private final String lookAtFuncPitch = 
+	private final static String lookAtFuncPitch = 
 			"kernel void "
 			+ "lookAtPitch(global const double *a, " +
 			"global const double *b, " +
@@ -79,6 +79,7 @@ public class OpenCLUtil {
 		//init openCL and get devices
 				try {
 					//init
+					
 					CL.create();
 					platform = CLPlatform.getPlatforms().get(0);
 					gpu = platform.getDevices(CL10.CL_DEVICE_TYPE_GPU).get(0);
@@ -114,11 +115,11 @@ public class OpenCLUtil {
 	public CLKernel createKernel(int type) {
 		String progString = "";
 		if(type == OpenCLUtil.WAR_CL_FUNC_ADD) {
-			progString = this.addFunc;
+			progString = OpenCLUtil.addFunc;
 		} else if(type == OpenCLUtil.WAR_CL_FUNC_LOOKATPITCH) {
-			progString = this.lookAtFuncPitch;
+			progString = OpenCLUtil.lookAtFuncPitch;
 		} else if(type == OpenCLUtil.WAR_CL_FUNC_LOOKATYAW) {
-			progString = this.lookAtFuncYaw;
+			progString = OpenCLUtil.lookAtFuncYaw;
 		} else {
 			throw new RuntimeException();
 		}
@@ -126,6 +127,7 @@ public class OpenCLUtil {
 		CLProgram prog = CL10.clCreateProgramWithSource(context, progString, null);
 		Util.checkCLError(CL10.clBuildProgram(prog, gpu, "", null));
 		CLKernel kernel = CL10.clCreateKernel(prog, "sum", null);
+		
 		return kernel;
 	}
 	

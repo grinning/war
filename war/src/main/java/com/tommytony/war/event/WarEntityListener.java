@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -58,14 +59,14 @@ import com.tommytony.war.utility.PlayerStat;
 /**
  * Handles Entity-Events
  *
- * @author tommytony, Tim Düsterhus
+ * @author tommytony, Tim Düsterhus, grinning
  * @package bukkit.tommytony.war
  */
 public class WarEntityListener implements Listener {
 
 	private final Random killSeed = new Random();
 
-	private final ThreadLocalRandom java7KillSeed = new ThreadLocalRandom();
+	private final Random java7KillSeed = new Random();
 	private final Java6RandomThreadWrapper java6KillSeed = new Java6RandomThreadWrapper();
 	
 			
@@ -74,8 +75,10 @@ public class WarEntityListener implements Listener {
 	 *
 	 * @param event
 	 *                fired event
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
-	private void handlerAttackDefend(EntityDamageByEntityEvent event) {
+	private void handlerAttackDefend(EntityDamageByEntityEvent event) throws InterruptedException, ExecutionException {
 		Entity attacker = event.getDamager();
 		Entity defender = event.getEntity();
 		
@@ -156,19 +159,18 @@ public class WarEntityListener implements Listener {
 					}
 					
 					if (attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
-						StringBuffer killMessage;
 						String attackerString = attackerTeam.getKind().getColor() + a.getName();
 						String defenderString = defenderTeam.getKind().getColor() + d.getName();
-						
+						Material killerWeapon = a.getItemInHand().getType();
+						String weaponString = killerWeapon.toString();
+						StringBuffer killMessage = null;
 						if (attacker.getEntityId() != defender.getEntityId()) {
-							Material killerWeapon = a.getItemInHand().getType();
-							String weaponString = killerWeapon.toString();
 							if (killerWeapon == Material.AIR) {
 								weaponString = "hand";
 							} else if (killerWeapon == Material.BOW || event.getDamager() instanceof Arrow) {
 								if(War.java7) {
 									//if we have java7 installed then we can optimize the random number gen
-									int rand = java7KillSeed.nextInt(0, 3);
+									int rand = java7KillSeed.nextInt(3);
 									if(rand == 0) {
 										weaponString = "arrow";
 									} else if(rand == 1) {
@@ -195,8 +197,8 @@ public class WarEntityListener implements Listener {
 							String verbString;
 							if(War.java7) {
 							  //java7 is go, we can optimize
-							    adjectiveString = War.war.getDeadlyAdjectives().get(this.java7KillSeed.nextInt(0, War.war.getDeadlyAdjectives().size()));
-							    verbString = War.war.getKillerVerbs().get(this.java7KillSeed.nextInt(0, War.war.getKillerVerbs().size()));
+							    adjectiveString = War.war.getDeadlyAdjectives().get(this.java7KillSeed.nextInt(War.war.getDeadlyAdjectives().size()));
+							    verbString = War.war.getKillerVerbs().get(this.java7KillSeed.nextInt(War.war.getKillerVerbs().size()));
 							} else {
 							  adjectiveString = War.war.getDeadlyAdjectives().get(this.killSeed.nextInt(War.war.getDeadlyAdjectives().size()));
 							  verbString = War.war.getKillerVerbs().get(this.killSeed.nextInt(War.war.getKillerVerbs().size()));
@@ -323,11 +325,10 @@ public class WarEntityListener implements Listener {
 					String deathMessage = "";
 					String defenderString = Team.getTeamByPlayerName(d.getName()).getKind().getColor() + d.getName();
 					
-					if (event.getDamager() instanceof TNTPrimed) {
-						deathMessage = defenderString + ChatColor.WHITE + " exploded";
-					} else {
-						deathMessage = defenderString + ChatColor.WHITE + " died";
-					}
+					deathMessage = event.getDamager() instanceof TNTPrimed ? new StringBuilder().append(defenderString)
+							.append(ChatColor.WHITE.getChar()).append("exploded").toString() : new StringBuilder().append(defenderString)
+							.append(ChatColor.WHITE.getChar()).append("died").toString();
+
 					for (Team team : defenderWarzone.getTeams()) {
 						team.teamcast(deathMessage);
 					}
@@ -483,7 +484,15 @@ public class WarEntityListener implements Listener {
 
 		// pass pvp-damage
 		if (event instanceof EntityDamageByEntityEvent) {
-			this.handlerAttackDefend((EntityDamageByEntityEvent) event);
+			try {
+				this.handlerAttackDefend((EntityDamageByEntityEvent) event);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else  {
 			Warzone zone = Warzone.getZoneByPlayerName(player.getName());
 			

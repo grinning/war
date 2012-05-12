@@ -1,7 +1,19 @@
 package com.tommytony.war;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -23,15 +35,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opencl.CL;
-import org.lwjgl.opencl.CLCommandQueue;
-import org.lwjgl.opencl.CLContext;
-import org.lwjgl.opencl.CLDevice;
-import org.lwjgl.opencl.CLMem;
-import org.lwjgl.opencl.CLPlatform;
-import org.lwjgl.opencl.CL10;
 
 import com.tommytony.war.command.WarCommandHandler;
 import com.tommytony.war.config.FlagReturn;
@@ -220,7 +223,7 @@ public class War extends JavaPlugin {
 		defaultLoadout.put(3, ironPick);
 		
 		ItemStack stoneSpade = new ItemStack(Material.STONE_SPADE, 1, (byte) 8);
-		stoneSword.setDurability((short) 8);
+		stoneSpade.setDurability((short) 8);
 		defaultLoadout.put(4, stoneSpade);
 				
 		this.getDefaultInventories().addLoadout("default", defaultLoadout);
@@ -257,50 +260,27 @@ public class War extends JavaPlugin {
 		WarYmlMapper.load();
 		
 		// Start tasks
-		HelmetProtectionTask helmetProtectionTask = new HelmetProtectionTask();
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, helmetProtectionTask, 250, 100);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new HelmetProtectionTask(), 250, 100);
+		
 		
 		if (this.isSpoutServer) {
-			SpoutFadeOutMessageJob fadeOutMessagesTask = new SpoutFadeOutMessageJob();
-			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, fadeOutMessagesTask, 100, 100);
+			this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new SpoutFadeOutMessageJob(), 100, 100);
 		}
 		
 		//Make stats directory
 		char sep = File.separatorChar;
 		File statsDir = new File("plugins" + sep + "war" + sep + "stats");
 		statsDir.mkdir();
-				
+		
 		//Get Runtime Information
 		
 		this.log("War v" + this.desc.getVersion() + " is on.", Level.INFO);
 		this.log("War detects " + Runtime.getRuntime().availableProcessors() + " processors.", Level.INFO);
 		this.log("War detects " + System.getProperty("os.name") + " operating system.", Level.INFO);
 		
-		if(System.getProperty("os.name").equals("Mac OS X")) {
-			Runtime.getRuntime().loadLibrary("src/main/resources/macosx/liblwjgl.jnilib");
-		} else if(System.getProperty("os.name").contains("Windows")) {
-			if(!System.getProperty("os.arch").equals("x86_64")) {
-				Runtime.getRuntime().loadLibrary("src\\main\\resources\\windows\\lwjgl.dll");
-			} else {
-				Runtime.getRuntime().loadLibrary("src\\main\\resources\\windows\\lwjgl64.dll");
-			}
-		} else if(System.getProperty("os.name").equals("Linux")) {
-			if(!System.getProperty("os.arch").equals("x86_64")) {
-				Runtime.getRuntime().loadLibrary("src/main/resources/linux/liblwjgl.so");
-			} else {
-				Runtime.getRuntime().loadLibrary("src/main/resources/linux/liblwjgl64.so");
-			}
-		} else if(System.getProperty("os.name").equals("Solaris")) {
-			if(!System.getProperty("os.arch").equals("x86_64")) {
-				Runtime.getRuntime().loadLibrary("src/main/resources/solaris/liblwjgl.so");
-			} else {
-				Runtime.getRuntime().loadLibrary("src/main/resources/solaris/liblwjgl64.so");
-				
-			}
-		}
+		War.loadNativeLibraries();
 		
 		this.cl = new OpenCLUtil();
-		
 		java7 = this.getJava7();
 		
 	}
@@ -1072,6 +1052,30 @@ public class War extends JavaPlugin {
 			return Bukkit.getServer().getPlayer((String) u);
 		} 
 		return null;
+	}
+	
+	public OpenCLUtil getCL() {
+		return this.cl;
+	}
+	
+	public static void loadNativeLibraries() {
+		String names = null;
+		try {
+			names = War.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+			
+		} catch (URISyntaxException e) {
+			
+			e.printStackTrace();
+		}
+		if(System.getProperty("os.name").equals("Mac OS X")) {
+			  System.setProperty("org.lwjgl.librarypath", names.replaceFirst("/target/classes", "/src/main/resources/macosx"));
+		} else if(System.getProperty("os.name").contains("Windows")) {
+				System.setProperty("org.lwjgl.librarypath", "src\\main\\resources\\windows");
+		} else if(System.getProperty("os.name").equals("Linux")) {
+			   System.setProperty("org.lwjgl.librarypath", "src/main/resources/linux");
+		} else if(System.getProperty("os.name").equals("Solaris")) {
+			System.setProperty("org.lwjgl.librarypath", "src/main/resources/solaris");
+		}
 	}
 }
 

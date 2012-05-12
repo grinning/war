@@ -7,6 +7,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -64,7 +65,7 @@ import com.tommytony.war.utility.PlayerStat;
  */
 public class WarPlayerListener implements Listener {
 	private java.util.Random random = new java.util.Random();
-	private java.util.ThreadLocalRandom java7Random = new java.util.ThreadLocalRandom();
+	private Random java7Random = new Random();
 	private HashMap<String, Location> latestLocations = new HashMap<String, Location>(); 
 
 	/**
@@ -647,7 +648,7 @@ public class WarPlayerListener implements Listener {
 			// Monuments
 			if (playerTeam != null && playerWarzone.nearAnyOwnedMonument(playerLoc, playerTeam) && player.getHealth() < 20 && player.getHealth() > 0 // don't heal the dead
 					) { // one chance out of many of getting healed
-				if(War.java7 && this.java7Random.nextInt(0, 7)) {
+				if(War.java7 && this.java7Random.nextInt(7) == 3) {
 					this.monumentHeal(player);
 					return;
 				} else if(this.random.nextInt(7) == 3) {
