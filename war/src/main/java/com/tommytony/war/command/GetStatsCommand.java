@@ -21,19 +21,20 @@ import com.tommytony.war.utility.PlayerStat;
 
 public class GetStatsCommand extends AbstractWarCommand {
 
-	
+
 	
 	public GetStatsCommand(WarCommandHandler handler, CommandSender sender, String[] args) {
 		super(handler, sender, args);
+		
 	}
 
 	@Override
 	public boolean handle() {
 		
-		if(super.args.length != 1) {
+		if(this.args.length != 1) {
 			War.war.badMsg(super.getSender(), "Usage: /wstats <player>  or /warstats <player>");
 			return true;
-		} else if(super.args.length == 1) {
+		} else if(this.args.length == 1) {
 			String name = args[0];
 			PlayerStat stats = War.war.getPlayerStats(name);
 			

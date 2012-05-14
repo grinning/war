@@ -89,6 +89,10 @@ commands:
     usage: Get stats.
         Ex - /warstats <player> or /wstats <player>
     aliases: warstats
+  wgui:
+    description: War> Toggles the War in-game gui.
+    usage: Used to toggle the War in-game gui.
+         Ex - /wgui
 # Warzone maker commands (must have the 'war.zonemaker' permission or be added as a zone-maker in /plugins/War/war.txt)
 # Battle-related commands
   nextbattle:

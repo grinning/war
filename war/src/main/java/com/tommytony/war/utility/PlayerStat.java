@@ -6,12 +6,16 @@ public class PlayerStat {
 	private int kills;
 	private int deaths;
 	private byte killStreak;
+	private int zoneKills;
+	private int zoneDeaths;
 	
 	public PlayerStat(String name, int kills, int deaths) {
 	    this.name = name;
 	    this.kills = kills;
 	    this.deaths = deaths;
 	    this.killStreak = 0;
+	    this.zoneKills = 0;
+	    this.zoneDeaths = 0;
 	}
 	
 	public PlayerStat(String name) {
@@ -19,6 +23,8 @@ public class PlayerStat {
 		this.kills = 0;
 		this.deaths = 0;
 		this.killStreak = 0;
+		this.zoneKills = 0;
+		this.zoneDeaths = 0;
 	}
 	
 	public String getName() {
@@ -51,6 +57,31 @@ public class PlayerStat {
 	
 	public byte getKillStreak() {
 		return this.killStreak;
+	}
+	
+	//a zone independent object
+	public int getZoneKills() {
+		return this.zoneKills;
+	}
+	
+	public int getZoneDeaths() {
+		return this.zoneDeaths;
+	}
+	
+	public void setZoneKills(int kills) {
+		this.zoneKills = kills;
+	}
+	
+	public void setZoneDeaths(int deaths) {
+		this.zoneDeaths = deaths;
+	}
+	
+	public void incZoneKills() {
+		this.zoneKills++;
+	}
+	
+	public void incZoneDeaths() {
+		this.zoneDeaths++;
 	}
 	
 	@Override

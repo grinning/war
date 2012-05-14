@@ -645,6 +645,8 @@ public class WarEntityListener implements Listener {
 			PlayerStat personWhoKilled = War.war.getPlayerStats(player.getKiller().getDisplayName());
 			personWhoKilled.incKills();
 			personWhoKilled.incKillStreak();
+			personWhoKilled.incZoneKills();
+			personWhoDied.incZoneDeaths();
 			//see updated this stuff so ya :)
 			
 			//check for kill streaks

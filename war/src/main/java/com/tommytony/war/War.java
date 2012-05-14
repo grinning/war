@@ -98,6 +98,7 @@ public class War extends JavaPlugin {
 	private final HashMap<String, String> wandBearers = new HashMap<String, String>(); // playername to zonename
 	private Map<String, PlayerStructureMapper> structureSavers = new HashMap<String, PlayerStructureMapper>();
 	private Map<String, PlayerStat> playerStats = new HashMap<String, PlayerStat>();
+	public List<String> playerGuis = new ArrayList<String>();
 
 	private final List<String> deadlyAdjectives = new ArrayList<String>();
 	private final List<String> killerVerbs = new ArrayList<String>();

@@ -3,6 +3,7 @@ package com.tommytony.war.event;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -49,6 +51,7 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.command.ZoneSetter;
 import com.tommytony.war.config.FlagReturn;
 import com.tommytony.war.config.TeamConfig;
+import com.tommytony.war.config.TeamKind;
 import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.mapper.PlayerStructureMapper;
 import com.tommytony.war.spout.SpoutDisplayer;
@@ -66,7 +69,8 @@ import com.tommytony.war.utility.PlayerStat;
 public class WarPlayerListener implements Listener {
 	private java.util.Random random = new java.util.Random();
 	private Random java7Random = new Random();
-	private HashMap<String, Location> latestLocations = new HashMap<String, Location>(); 
+	private HashMap<String, Location> latestLocations = new HashMap<String, Location>();
+	private ArrayList<String> messages = new ArrayList<String>();
 
 	/**
 	 * Correctly removes quitting players from warzones
@@ -523,12 +527,17 @@ public class WarPlayerListener implements Listener {
 						} else if (team.getPlayers().size() < team.getTeamConfig().resolveInt(TeamConfig.TEAMSIZE)) {
 							team.addPlayer(player);
 							War.war.getPlayerStats(player.getName()).zeroKillStreak();
+							War.war.getPlayerStats(player.getName()).setZoneDeaths(0);
+							War.war.getPlayerStats(player.getName()).setZoneKills(0);
 							//set his kill streak to 0
 							team.resetSign();
 							if (War.war.getWarHub() != null) {
 								War.war.getWarHub().resetZoneSign(zone);
 							}
 							zone.keepPlayerState(player);
+							//tell him about our cool new Gui
+							War.war.msg(player, "If you would like to toggle the Warzone Gui use /wgui");
+							War.war.playerGuis.add(player.getName());
 							War.war.msg(player, "Your inventory is in storage until you exit with '/war leave'.");
 							zone.respawnPlayer(event, team, player);
 							for (Team t : zone.getTeams()) {
@@ -943,6 +952,17 @@ public class WarPlayerListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onPlayerChat(PlayerChatEvent event) {
+		if(War.war.isLoaded()) {
+			messages.add(0 ,event.getFormat());
+			if(messages.get(16) != null) {
+				messages.remove(16);
+			}
+			this.updateGui();
+		}
+	}
+	
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if(War.war.isLoaded()) {
 			
@@ -1036,6 +1056,29 @@ public class WarPlayerListener implements Listener {
 			heartNum = ((newHp - currentHp - 1) / 2) + ".5 ";
 		}
 		War.war.msg(player, "Your dance pleases the monument's voodoo. You gain " + heartNum + "heart" + isS + "!");
+	}
+	
+	//updates the player GUI
+	public void updateGui() {
+		
+		//so we use the top 4 chat slots
+		for(String player : War.war.playerGuis) {
+			Player realP = Bukkit.getPlayer(player);
+			Warzone zone = Warzone.getZoneByName(player);
+			Team team = Team.getTeamByPlayerName(player);
+			PlayerStat stats = War.war.getPlayerStats(player);
+			realP.sendMessage(ChatColor.GREEN + "Warzone: " + ChatColor.BLUE + zone.getName() + "  " +
+			ChatColor.GREEN + "Team: " + ChatColor.BLUE + team.getName());
+			realP.sendMessage(team.getKind().getColor() + team.getName() + " points: " + team.getPoints() + "/" + team.getTeamConfig().getInt(TeamConfig.MAXSCORE) +
+					"  lifepool: " + team.getRemainingLifes() + "/" + team.getTeamConfig().getInt(TeamConfig.LIFEPOOL));
+			realP.sendMessage(ChatColor.GREEN + "Kills: " + ChatColor.BLUE + stats.getZoneKills() + " " + ChatColor.RED + "Deaths: " + ChatColor.BLUE +
+					stats.getZoneDeaths() + ChatColor.GOLD + " Streak: " + ChatColor.LIGHT_PURPLE + stats.getKillStreak());
+			realP.sendMessage("-------------------------------------------------------------------");
+			for(int i = 0; i < 16; i++) {
+				realP.sendMessage(this.messages.get(i));
+			}
+			
+		}
 	}
 	
 }
