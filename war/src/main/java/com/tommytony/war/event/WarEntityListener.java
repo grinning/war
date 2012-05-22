@@ -289,7 +289,10 @@ public class WarEntityListener implements Listener {
 				// let normal PVP through is its not turned off or if you have perms
 			} else if (attackerTeam == null && defenderTeam == null && !War.war.canPvpOutsideZones(a)) {
 				if (!War.war.getWarConfig().getBoolean(WarConfig.DISABLEPVPMESSAGE)) {
+					if(!(event.getDamager() instanceof org.bukkit.entity.EnderPearl)) {
 					War.war.badMsg(a, "You need the 'war.pvp' permission to attack players outside warzones.");
+					}
+					return;
 				}
 				event.setCancelled(true); // global pvp is off
 			} else {
@@ -477,6 +480,7 @@ public class WarEntityListener implements Listener {
 		}
 		Player player = (Player) entity;
 
+		
 		// prevent godmode
 		if (Warzone.getZoneByPlayerName(player.getName()) != null) {
 			event.setCancelled(false);

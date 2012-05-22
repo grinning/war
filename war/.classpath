@@ -8,5 +8,7 @@
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/Users/Becker/.m2/repository/org/bukkit/bukkit/1.2.4-R1.0/bukkit-1.2.4-R1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jBenchX"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -10,7 +10,7 @@ import static org.mockito.Mockito.*;
 
 public class CLTest {
 
-	@Test
+	//@Test
 	public void testSetup() {
 		War.loadNativeLibraries();
 		OpenCLUtil cl = new OpenCLUtil();

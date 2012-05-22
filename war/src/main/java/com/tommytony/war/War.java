@@ -64,6 +64,7 @@ import com.tommytony.war.utility.OpenCLUtil;
 import com.tommytony.war.utility.PlayerStat;
 import com.tommytony.war.utility.PlayerState;
 
+
 /**
  * Main class of War
  *
