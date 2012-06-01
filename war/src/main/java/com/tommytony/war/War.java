@@ -1,26 +1,30 @@
 package com.tommytony.war;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -85,6 +89,7 @@ public class War extends JavaPlugin {
 	private PluginDescriptionFile desc = null;
 	private boolean loaded = false;
 	private boolean isSpoutServer = false;
+    private boolean hasMultiverse = false;
 
 	// Zones and hub
 	private List<Warzone> warzones = new ArrayList<Warzone>();
@@ -152,6 +157,14 @@ public class War extends JavaPlugin {
 			spoutMessenger = new SpoutDisplayer();
 		} catch (ClassNotFoundException e) {
 			isSpoutServer = false;
+		}
+		
+		try {
+			//check for multiverse for the War-world installation
+			Class.forName("com.onarandombox.MultiverseCore.MultiverseCore");
+			this.hasMultiverse = true;
+		} catch(ClassNotFoundException e) {
+			
 		}
 
 		// Register events
@@ -1077,6 +1090,72 @@ public class War extends JavaPlugin {
 			   System.setProperty("org.lwjgl.librarypath", "src/main/resources/linux");
 		} else if(System.getProperty("os.name").equals("Solaris")) {
 			System.setProperty("org.lwjgl.librarypath", "src/main/resources/solaris");
+		}
+	}
+	
+	public boolean hasMultiverse() {
+		return this.hasMultiverse;
+	}
+	
+	public void createWarWorld() {
+		try {
+			Class<?> mvMain = Class.forName("com.onarandombox.MultiverseCore.MultiverseCore");
+		//	mvMain.getDeclaredMethod("getMVWorldManager", null).invoke(mvMain, null).getClass().;
+			
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	protected void downloadWarWorld() throws IOException, MalformedURLException {
+		
+		URL download = new URL("http://war.tommytony.com/res/warworld/world.zip");
+		BufferedReader in = new BufferedReader(new InputStreamReader(download.openStream()));
+		BufferedWriter out = new BufferedWriter(new FileWriter("/plugins/War/war-world/temp.zip"));
+		String writeBuffer = "";
+		while((writeBuffer = in.readLine()) != null) {
+			out.write(writeBuffer);
+		}
+		in.close();
+		out.close();
+		ZipFile zipped = new ZipFile("/plugins/War/war-world/temp.zip");
+		Enumeration entries;
+		entries = zipped.entries();
+		
+		while(entries.hasMoreElements()) {
+			ZipEntry entry = (ZipEntry)entries.nextElement();
+			if(entry.isDirectory()) {
+				new File(entry.getName()).mkdir();
+				continue;
+			}
+			//now just copy the input streams :D
+		}
+	}
+	
+	protected void checkWarWorldVersion() {
+		try {
+			URL tommytony = new URL("http://war.tommytony.com/res/warworld/version.html");
+			try {
+				String a = tommytony.openConnection().getHeaderField("war-world_version");
+				//now the blah blah blah code here
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
