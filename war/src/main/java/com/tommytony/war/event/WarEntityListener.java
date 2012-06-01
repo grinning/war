@@ -137,6 +137,15 @@ public class WarEntityListener implements Listener {
 					heldItem.setDurability(++dura); //Remember to keep pre inc operator, not post!
 					return;
 				}
+				if((defender instanceof Player) && (((Player)defender).getHealth() <= 10) 
+					&&
+				(Warzone.getZoneByLocation((Player)defender).getWarzoneConfig().
+						getBoolean(WarzoneConfig.HEALERS))) {
+					Player pp = (Player) defender;
+					//we are a healing zone, and we are low on health, lets call out for healers
+					Team.getTeamByPlayerName(pp.getName()).teamcast(new StringBuilder("Help!!! It's ")
+					.append(pp.getName()).append(" and I'm low on health! Please heal me!").toString());
+				}
 				
 				if (!attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.PVPINZONE)) {
 					// spleef-like, non-pvp, zone
@@ -488,6 +497,17 @@ public class WarEntityListener implements Listener {
 
 		// pass pvp-damage
 		if (event instanceof EntityDamageByEntityEvent) {
+			if((Warzone.getZoneByPlayerName(player.getName()).getWarzoneConfig()
+					.getBoolean(WarzoneConfig.HEALERS)) && (((Player)((EntityDamageByEntityEvent)
+					event).getDamager()).getItemInHand().getType() == Material.GOLD_SWORD) &&
+					(Team.getTeamByPlayerName(player.getName()).getPlayers().contains(((Player)
+							((EntityDamageByEntityEvent)event).getDamager()).getName()))) {
+				//a lot of complicated type-casting! It basically checks the healing status and the weapon
+				//and the team, not very readable though!
+				player.setHealth(player.getHealth() + 5); // + 2.5 hearts
+				event.setCancelled(true);
+				return;
+			} else {
 			try {
 				this.handlerAttackDefend((EntityDamageByEntityEvent) event);
 			} catch (InterruptedException e) {
@@ -496,6 +516,7 @@ public class WarEntityListener implements Listener {
 			} catch (ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
 			}
 		} else  {
 			Warzone zone = Warzone.getZoneByPlayerName(player.getName());
