@@ -186,11 +186,9 @@ public class VolumeMapper {
 									}
 								} else if (typeId == Material.CHEST.getId()) {
 									// Chests
-									String extra = "";
 									List<ItemStack> contents = volume.getInvBlockContents().get("chest-" + i + "-" + j + "-" + k);
 									if (contents != null) {
 										out.write(buildInventoryStringFromItemList(contents));
-										out.write(extra);
 									}
 								} else if (typeId == Material.DISPENSER.getId()) {
 									// Dispensers
