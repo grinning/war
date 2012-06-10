@@ -62,6 +62,13 @@ public class WarHub {
 		this.setLocation(location);
 	}
 
+	public WarHub(WarHub warHub) {
+		this.location = warHub.location;
+		this.volume = warHub.volume;
+		
+		this.setLocation(location);
+	}
+
 	public Volume getVolume() {
 		return this.volume;
 	}

@@ -1,9 +1,12 @@
 package com.tommytony.war;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -21,6 +25,7 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -94,6 +99,8 @@ public class War extends JavaPlugin {
 	// Zones and hub
 	private List<Warzone> warzones = new ArrayList<Warzone>();
 	private WarHub warHub;
+	private SoftReference<WarHub> warhub = new SoftReference<WarHub>(warHub);
+
 	
 	private final List<String> zoneMakerNames = new ArrayList<String>();
 	private final List<String> commandWhitelist = new ArrayList<String>();
@@ -124,6 +131,7 @@ public class War extends JavaPlugin {
 	public War() {
 		super();
 		War.war = this;
+		warhub.enqueue();
 	}
 
 	/**
@@ -309,8 +317,10 @@ public class War extends JavaPlugin {
 		}
 		this.warzones.clear();
 
-		if (this.warHub != null) {
-			this.warHub.getVolume().resetBlocks();
+		if (this.warhub.get() != null) {
+			//DON"T CREATE A STRONG REFERENCE
+			WarHub hub = warhub.get();
+			hub.getVolume().resetBlocks();
 		}
 
 		this.getServer().getScheduler().cancelTasks(this);
@@ -954,11 +964,18 @@ public class War extends JavaPlugin {
 	}
 
 	public WarHub getWarHub() {
-		return this.warHub;
+		return new WarHub(warhub.get());
 	}
 
 	public void setWarHub(WarHub warHub) {
-		this.warHub = warHub;
+		//no strong references, yes we refer to it but not through a strong reference, it goes out of scope
+		//but still stays on the call stack
+		WarHub a = new WarHub(warhub.get());
+		a.setLocation(warHub.getLocation());
+		a.setVolume(warHub.getVolume());
+		a.setOrientation(warHub.getOrientation());
+		//Must be cleared, it referes to the object so it must be nulled
+		a = null;
 	}
 
 	public boolean isLoaded() {
@@ -1116,7 +1133,7 @@ public class War extends JavaPlugin {
 	}
 	
 	protected void downloadWarWorld() throws IOException, MalformedURLException {
-		
+		final int BUFFER_SIZE = 4096; //4kb!!!
 		URL download = new URL("http://war.tommytony.com/res/warworld/world.zip");
 		BufferedReader in = new BufferedReader(new InputStreamReader(download.openStream()));
 		BufferedWriter out = new BufferedWriter(new FileWriter("/plugins/War/war-world/temp.zip"));
@@ -1127,37 +1144,59 @@ public class War extends JavaPlugin {
 		in.close();
 		out.close();
 		ZipFile zipped = new ZipFile("/plugins/War/war-world/temp.zip");
-		Enumeration entries;
+		@SuppressWarnings("rawtypes")
+		Enumeration entries = null;
 		entries = zipped.entries();
 		
 		while(entries.hasMoreElements()) {
 			ZipEntry entry = (ZipEntry)entries.nextElement();
+			Bukkit.getServer().getLogger().log(Level.INFO, new StringBuilder().append("War> Decompressing ")
+					.append(entry).append(" of \"war-world\" zip file").toString());
 			if(entry.isDirectory()) {
 				new File(entry.getName()).mkdir();
 				continue;
 			}
-			//now just copy the input streams :D
+			BufferedInputStream input = new BufferedInputStream(zipped.getInputStream(entry));
+			byte[] buffer = new byte[BUFFER_SIZE];
+			int count;
+			BufferedOutputStream dest = new BufferedOutputStream(new FileOutputStream(entry.getName()), BUFFER_SIZE);
+			    while((count = input.read(buffer, 0, BUFFER_SIZE)) != -1) {
+				    dest.write(buffer, 0, count);
+			    }
+			    dest.flush();
+			    dest.close();
+			    input.close();
 		}
 	}
 	
 	protected void checkWarWorldVersion() {
+		StringBuffer msg = null;
 		try {
 			URL tommytony = new URL("http://war.tommytony.com/res/warworld/version.html");
 			try {
-				String a = tommytony.openConnection().getHeaderField("war-world_version");
-				//now the blah blah blah code here
+				double a = Double.parseDouble(tommytony.openConnection().getHeaderField("war-world_version"));
+				double b;
+				try {
+				    b = Double.parseDouble(new Scanner(new File("/warworld/version.txt")).next());
+				} catch(FileNotFoundException e) {
+				  b = 0.0; //set it so it must be tinyier!
+				}
+				if(a > b) {
+					Bukkit.getServer().getLogger().log(Level.INFO, "War> \"war-world\" version does not match latest, downloading latest version");
+					this.downloadWarWorld();
+				} else {
+					Bukkit.getServer().getLogger().log(Level.INFO, "War> \"war-world\" version matches the latest version");
+				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				 msg = msg.append("Problem recieving data from external server");
 			}
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	       } catch (MalformedURLException e) {
+	    	    char appendness = (msg == null) ? '\n' : ' ';
+	    	     msg = msg.append(appendness);
+                 msg = msg.append("Make sure that your computer is connected to the internet!");
 		}
-	}
+	    	  Bukkit.getServer().getLogger().log(Level.WARNING, "War> " + msg.toString());
+       }
 }
 
 
