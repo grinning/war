@@ -19,6 +19,9 @@ import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Formatter;
@@ -1132,17 +1135,31 @@ public class War extends JavaPlugin {
 		}
 	}
 	
-	protected void downloadWarWorld() throws IOException, MalformedURLException {
+	protected void downloadWarWorld() throws Exception {
 		final int BUFFER_SIZE = 4096; //4kb!!!
 		URL download = new URL("http://war.tommytony.com/res/warworld/world.zip");
 		BufferedReader in = new BufferedReader(new InputStreamReader(download.openStream()));
 		BufferedWriter out = new BufferedWriter(new FileWriter("/plugins/War/war-world/temp.zip"));
 		String writeBuffer = "";
+		String totalFile = "";
+		while(true) {
+			try {
+			totalFile += in.readLine();
+			}catch(NullPointerException e) {
+				break;
+			}
+		}
 		while((writeBuffer = in.readLine()) != null) {
 			out.write(writeBuffer);
 		}
-		in.close();
 		out.close();
+		in.close();
+	   //check data integrity
+		String fileChecksum = new URL("http://war.tommytony.com/res/warworld/data.html").openConnection().getHeaderField("file_digest");
+	    MessageDigest md5 = MessageDigest.getInstance("MD5");
+	    if(!fileChecksum.equals(new String(md5.digest(totalFile.getBytes(Charset.forName("UTF-8")))))) {
+	    	throw new Exception("Download Error: File integrity is not right");
+	    }
 		ZipFile zipped = new ZipFile("/plugins/War/war-world/temp.zip");
 		@SuppressWarnings("rawtypes")
 		Enumeration entries = null;
@@ -1172,7 +1189,7 @@ public class War extends JavaPlugin {
 	protected void checkWarWorldVersion() {
 		StringBuffer msg = null;
 		try {
-			URL tommytony = new URL("http://war.tommytony.com/res/warworld/version.html");
+			URL tommytony = new URL("http://war.tommytony.com/res/warworld/data.html");
 			try {
 				double a = Double.parseDouble(tommytony.openConnection().getHeaderField("war-world_version"));
 				double b;
