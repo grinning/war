@@ -39,6 +39,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -802,6 +803,15 @@ public class WarEntityListener implements Listener {
 		} else {
 			return;
 		}
+	}
+	
+	@EventHandler
+	public void onEntityTeleportEvent(final EntityTeleportEvent event) {
+	     Warzone zone = (event.getEntity() instanceof Player) ? Warzone.getZoneByLocation((Player) event.getEntity()) : null;
+	     if(zone != null) {
+	    	 if(event.getTo().getWorld() != event.getFrom().getWorld())
+	    		 event.setCancelled(true);
+	     }
 	}
 	
 	public static void giveDogNewTarget(Team senderTeam, Warzone zone, Wolf[] wolfs) {
