@@ -67,6 +67,7 @@ import com.tommytony.war.job.SpoutFadeOutMessageJob;
 import com.tommytony.war.mapper.PlayerStructureMapper;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
+import com.tommytony.war.mapper.ZoneVolumeMapper;
 import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.WarHub;
 import com.tommytony.war.structure.ZoneLobby;
@@ -499,7 +500,10 @@ public class War extends JavaPlugin {
 			}
 			
 			if(namedParams.containsKey("rename")) {
+				WarzoneYmlMapper.delete(warzone.getName());
 				warzone.setName(namedParams.get("rename"));
+				WarzoneYmlMapper.save(warzone, true);
+				ZoneVolumeMapper.save(warzone.getVolume(), warzone.getName());
 			}
 			
 			returnMessage.append(warzone.getWarzoneConfig().updateFromNamedParams(namedParams));
