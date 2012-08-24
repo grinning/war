@@ -392,6 +392,11 @@ public class Warzone {
 				}
 			}, team.getTeamConfig().resolveInt(TeamConfig.RESPAWNTIMER) * 20L); // 20 ticks = 1 second
 		}
+		if(!this.getWarzoneConfig().getBoolean(WarzoneConfig.BLOCKHEADS)) {
+			if(player.getInventory().getArmorContents()[0].getType() == Material.LEATHER_HELMET) {
+				player.getInventory().setHelmet(null);
+			}
+		}
 	}
 	
 	public void handleInfectionRespawn(Player player) {
