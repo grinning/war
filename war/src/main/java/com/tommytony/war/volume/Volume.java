@@ -27,7 +27,7 @@ import com.tommytony.war.job.BlockResetJob;
  *
  */
 public class Volume {
-	private final String name;
+	private String name;
 	private World world;
 	// private final Warzone warzone;
 	private BlockInfo cornerOne;
@@ -40,6 +40,10 @@ public class Volume {
 	public Volume(String name, World world) {
 		this.name = name;
 		this.world = world;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public World getWorld() {

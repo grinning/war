@@ -501,7 +501,9 @@ public class War extends JavaPlugin {
 			
 			if(namedParams.containsKey("rename")) {
 				WarzoneYmlMapper.delete(warzone.getName());
+				ZoneVolumeMapper.delete(warzone.getVolume());
 				warzone.setName(namedParams.get("rename"));
+				warzone.getVolume().setName(warzone.getName());
 				WarzoneYmlMapper.save(warzone, true);
 				ZoneVolumeMapper.save(warzone.getVolume(), warzone.getName());
 			}
