@@ -98,6 +98,7 @@ public class War extends JavaPlugin {
 	private boolean loaded = false;
 	private boolean isSpoutServer = false;
     private boolean hasMultiverse = false;
+    private boolean hasGunsPlus = false;
 
 	// Zones and hub
 	private List<Warzone> warzones = new ArrayList<Warzone>();
@@ -175,8 +176,16 @@ public class War extends JavaPlugin {
 			Class.forName("com.onarandombox.MultiverseCore.MultiverseCore");
 			this.hasMultiverse = true;
 		} catch(ClassNotFoundException e) {
-			
+		   this.hasMultiverse = false;	
 		}
+		
+		try {
+			Class.forName("team.GunsPlus.GunsPlus");
+		    this.hasGunsPlus = true;
+		} catch(ClassNotFoundException e) {
+			this.hasGunsPlus = false;
+		}
+		
 
 		// Register events
 		PluginManager pm = this.getServer().getPluginManager();
@@ -1214,6 +1223,10 @@ public class War extends JavaPlugin {
 		}
 	    	  Bukkit.getServer().getLogger().log(Level.WARNING, "War> " + msg.toString());
        }
+	
+	public boolean hasGunsPlus() {
+		return this.hasGunsPlus;
+	}
 }
 
 

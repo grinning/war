@@ -156,6 +156,36 @@ public class WarEntityListener implements Listener {
 				if (attackerTeam != null && defenderTeam != null && attacker.getEntityId() == defender.getEntityId()) {
 					War.war.badMsg(a, "You hit yourself!");
 				}
+				//we have GunsPlus running on the server
+				if((event.getDamage() >= d.getHealth()) && War.war.hasGunsPlus()) {
+					if(defenderWarzone.getReallyDeadFighters().contains(d.getName())) {
+						if(d.getHealth() != 0)
+							d.setHealth(0);
+						return;
+					}
+					//bug with gunsplus where they might not die! NOW THEY SHALL!
+					defenderWarzone.handleDeath(d);
+					
+					if(attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
+					    String attackerString = new StringBuilder().append(attackerTeam.getKind().getColor()).append(a.getName()).toString();
+					    String defenderString = new StringBuilder().append(attackerTeam.getKind().getColor()).append(a.getName()).toString();
+					    
+						int aX = (int) a.getLocation().getX();
+						int aY = (int) a.getLocation().getY();
+						int aZ = (int) a.getLocation().getZ();
+						int dX = (int) d.getLocation().getX();
+						int dY = (int) d.getLocation().getY();
+						int dZ = (int) d.getLocation().getZ();
+						//dist form for 3d = SQRT((x1 - x2)^2 + (y1 - y2)^2 + (z1 - z2)^2)
+						int dist = (int) Math.sqrt(((aX - dX) * (aX - dX)) + ((aY - dY) * (aY - dY)) + ((aZ - dZ) * (aZ - dZ)));
+					    
+					    //tommy's twin tower spawn<>
+					    for (Team team : defenderWarzone.getTeams()) {
+						    team.teamcast(attackerString.toString() + "'s smoking gun killed " + defenderString.toString() + "From " + dist + " meters away!");
+						}
+					}
+					event.setCancelled(true);
+				}
 
 				// Detect death, prevent it and respawn the player
 				if (event.getDamage() >= d.getHealth()) {
@@ -511,10 +541,8 @@ public class WarEntityListener implements Listener {
 			try {
 				this.handlerAttackDefend((EntityDamageByEntityEvent) event);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			}
