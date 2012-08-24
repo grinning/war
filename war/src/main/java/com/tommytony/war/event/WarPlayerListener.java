@@ -584,6 +584,7 @@ public class WarPlayerListener implements Listener {
 					playerWarzone.handlePlayerLeave(player, playerWarzone.getTeleport(), event, true);
 					return;
 				}
+				return;
 			}
 		}
 

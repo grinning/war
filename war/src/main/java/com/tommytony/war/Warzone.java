@@ -972,6 +972,7 @@ public class Warzone {
 					for (Team t : teams) {
 						t.teamcast("A new battle begins. Resetting warzone...");
 					}
+					
 					playerWarzone.getVolume().resetBlocksAsJob();
 					playerWarzone.initializeZoneAsJob(player);
 				}
