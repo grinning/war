@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
+import java.util.concurrent.Future;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,6 +52,7 @@ import com.tommytony.war.Warzone;
 import com.tommytony.war.config.TeamConfig;
 import com.tommytony.war.config.WarConfig;
 import com.tommytony.war.config.WarzoneConfig;
+import com.tommytony.war.job.CalculateDistanceJob;
 import com.tommytony.war.job.DeferredBlockResetsJob;
 import com.tommytony.war.spout.SpoutDisplayer;
 import com.tommytony.war.structure.Bomb;
@@ -167,17 +171,15 @@ public class WarEntityListener implements Listener {
 					defenderWarzone.handleDeath(d);
 					
 					if(attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
-					    String attackerString = new StringBuilder().append(attackerTeam.getKind().getColor()).append(a.getName()).toString();
+						Future<Integer> task = Bukkit.getScheduler().callSyncMethod(War.war, new CalculateDistanceJob(a, d));
+						String attackerString = new StringBuilder().append(attackerTeam.getKind().getColor()).append(a.getName()).toString();
 					    String defenderString = new StringBuilder().append(attackerTeam.getKind().getColor()).append(a.getName()).toString();
-					    
-						int aX = (int) a.getLocation().getX();
-						int aY = (int) a.getLocation().getY();
-						int aZ = (int) a.getLocation().getZ();
-						int dX = (int) d.getLocation().getX();
-						int dY = (int) d.getLocation().getY();
-						int dZ = (int) d.getLocation().getZ();
-						//dist form for 3d = SQRT((x1 - x2)^2 + (y1 - y2)^2 + (z1 - z2)^2)
-						int dist = (int) Math.sqrt(((aX - dX) * (aX - dX)) + ((aY - dY) * (aY - dY)) + ((aZ - dZ) * (aZ - dZ)));
+						int dist = 0;
+						try {
+							dist = task.get(500, TimeUnit.NANOSECONDS);
+						} catch (TimeoutException e) {
+							e.printStackTrace();
+						}
 					    
 					    //tommy's twin tower spawn<>
 					    for (Team team : defenderWarzone.getTeams()) {
@@ -198,6 +200,7 @@ public class WarEntityListener implements Listener {
 					}
 					
 					if (attackerWarzone.getWarzoneConfig().getBoolean(WarzoneConfig.DEATHMESSAGES)) {
+						Future<Integer> task = Bukkit.getScheduler().callSyncMethod(War.war, new CalculateDistanceJob(a, d));
 						String attackerString = attackerTeam.getKind().getColor() + a.getName();
 						String defenderString = defenderTeam.getKind().getColor() + d.getName();
 						Material killerWeapon = a.getItemInHand().getType();
@@ -248,15 +251,7 @@ public class WarEntityListener implements Listener {
 						} else {
 							killMessage.append(defenderString).append(ChatColor.WHITE + " committed accidental suicide");
 						}
-						
-						int aX = (int) a.getLocation().getX();
-						int aY = (int) a.getLocation().getY();
-						int aZ = (int) a.getLocation().getZ();
-						int dX = (int) d.getLocation().getX();
-						int dY = (int) d.getLocation().getY();
-						int dZ = (int) d.getLocation().getZ();
-						//dist form for 3d = SQRT((x1 - x2)^2 + (y1 - y2)^2 + (z1 - z2)^2)
-						int dist = (int) Math.sqrt(((aX - dX) * (aX - dX)) + ((aY - dY) * (aY - dY)) + ((aZ - dZ) * (aZ - dZ)));
+						int dist = task.get().intValue();
 						
 						for (Team team : defenderWarzone.getTeams()) {
 							if(weaponString.equals("bow") || weaponString.equals("aim") || weaponString.equals("arrow")) {
