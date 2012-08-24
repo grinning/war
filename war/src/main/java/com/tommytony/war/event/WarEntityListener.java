@@ -811,6 +811,14 @@ public class WarEntityListener implements Listener {
 	     if(zone != null) {
 	    	 if(event.getTo().getWorld() != event.getFrom().getWorld())
 	    		 event.setCancelled(true);
+	    	 else {
+	    		 if(event.getTo() == zone.getTeleport()) {
+	    			 return;
+	    		 } else if(event.getTo() == zone.getRallyPoint()) {
+	    			 return;
+	    		 }
+	    		 event.setCancelled(true);
+	    	 }
 	     }
 	}
 	
