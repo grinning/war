@@ -231,6 +231,7 @@ public class War extends JavaPlugin {
 		warzoneDefaultConfig.put(WarzoneConfig.INFECTION, false);
 		warzoneDefaultConfig.put(WarzoneConfig.SNOWGRENADE, false);
 		warzoneDefaultConfig.put(WarzoneConfig.EASYCONFIG, false);
+		warzoneDefaultConfig.put(WarzoneConfig.HEALERS, false);
 		
 		teamDefaultConfig.put(TeamConfig.FLAGMUSTBEHOME, true);
 		teamDefaultConfig.put(TeamConfig.FLAGPOINTSONLY, false);
