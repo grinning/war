@@ -33,6 +33,10 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javolution.text.TextBuilder;
+import javolution.util.FastList;
+import javolution.util.FastMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -106,19 +110,19 @@ public class War extends JavaPlugin {
 	private SoftReference<WarHub> warhub = new SoftReference<WarHub>(warHub);
 
 	
-	private final List<String> zoneMakerNames = new ArrayList<String>();
-	private final List<String> commandWhitelist = new ArrayList<String>();
+	private final List<String> zoneMakerNames = new FastList<String>();
+	private final List<String> commandWhitelist = new FastList<String>();
 	
-	private final List<Warzone> incompleteZones = new ArrayList<Warzone>();
-	private final List<String> zoneMakersImpersonatingPlayers = new ArrayList<String>();
+	private final List<Warzone> incompleteZones = new FastList<Warzone>();
+	private final List<String> zoneMakersImpersonatingPlayers = new FastList<String>();
 	private HashMap<String, PlayerState> disconnected = new HashMap<String, PlayerState>();
-	private final HashMap<String, String> wandBearers = new HashMap<String, String>(); // playername to zonename
+	private final Map<String, String> wandBearers = new FastMap<String, String>(); // playername to zonename
 	private Map<String, PlayerStructureMapper> structureSavers = new HashMap<String, PlayerStructureMapper>();
 	private Map<String, PlayerStat> playerStats = new HashMap<String, PlayerStat>();
-	public List<String> playerGuis = new ArrayList<String>();
+	public List<String> playerGuis = new FastList<String>();
 
-	private final List<String> deadlyAdjectives = new ArrayList<String>();
-	private final List<String> killerVerbs = new ArrayList<String>();
+	private final List<String> deadlyAdjectives = new FastList<String>();
+	private final List<String> killerVerbs = new FastList<String>();
 
 	private final InventoryBag defaultInventories = new InventoryBag();
 
@@ -431,7 +435,7 @@ public class War extends JavaPlugin {
 				}
 			}
 			
-			StringBuilder returnMessage = new StringBuilder();
+			TextBuilder returnMessage = new TextBuilder();
 			returnMessage.append(team.getTeamConfig().updateFromNamedParams(namedParams));
 			
 			if (commandSender instanceof Player) {
@@ -481,7 +485,7 @@ public class War extends JavaPlugin {
 				}
 			}
 			
-			StringBuilder returnMessage = new StringBuilder();
+			TextBuilder returnMessage = new TextBuilder();
 			if (namedParams.containsKey("author")) {
 				for(String author : namedParams.get("author").split(",")) {
 					if (!(author.length() == 0) && !warzone.getAuthors().contains(author)) {
