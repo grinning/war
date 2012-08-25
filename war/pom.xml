@@ -18,7 +18,7 @@
 	<name>War</name>
 	<url>http://war.tommytony.com</url>
 	<repositories>
-<<<<<<< HEAD
+
         <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
@@ -26,7 +26,7 @@
         <repository>
             <id>spout-repo</id>
             <url>http://nexus.spout.org/content/groups/public/</url>
-=======
+         </repository>
 		<repository>
 			<id>spout-repo</id>
 			<url>http://nexus.getspout.org/content/groups/public/</url>
@@ -46,7 +46,6 @@
 		<repository>
             <id>java.net-maven2-repository</id>
             <url>java-net:/maven2-repository/trunk/repository/</url>
->>>>>>> Added Javolution Dependency
         </repository>
 	</repositories>
 	<issueManagement>
@@ -80,13 +79,13 @@
                         <id>unpacknatives</id>
                         <phase>generate-resources</phase>
                         <goals>
-                                <goal>copy</goal>
+                        <goal>copy</goal>
                         </goals>
                 </execution>
         </executions>
        </plugin>
 		
-</plugins>
+        </plugins>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>
@@ -109,13 +108,19 @@
 				</includes>
 			</resource>
 		</resources>
-	</build>
+		</build>
 	<dependencies>
 		<dependency>
           <groupId>javolution</groupId>
           <artifactId>javolution</artifactId>
           <version>5.3.1</version>
-      </dependency>  
+      </dependency> 
+      <dependency>
+          <groupId>org.getspout</groupId>
+          <artifactId>spoutpluginapi</artifactId>
+          <version>dev-SNAPSHOT</version>
+          <scope>compile</scope>
+      </dependency> 
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
