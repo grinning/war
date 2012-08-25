@@ -28,20 +28,16 @@
 			<url>http://nexus.getspout.org/content/groups/public/</url>
 		</repository>
 		<repository>
-			<id>sk89q-mvn2</id>
-			<url>http://mvn2.sk89q.com/repo</url>
-		</repository>
-		<repository>
-			<id>repobo-rel</id>
-			<url>http://repo.bukkit.org/content/repositories/releases/</url>
-		</repository>
-		<repository>
 			<id>repobo-snap</id>
 			<url>http://repo.bukkit.org/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
             <id>java.net-maven2-repository</id>
             <url>java-net:/maven2-repository/trunk/repository/</url>
+        </repository>
+        <repository>
+           <id>java.net</id>
+           <url>http://maven2-repository.dev.java.net/</url>
         </repository>
 	</repositories>
 	<issueManagement>
@@ -79,7 +75,7 @@
                 </execution>
         </executions>
         <configuration>
-            <nativesTargetDir>/src/main/resources</nativesTargetDir>
+            <nativesTargetDir>/target/natives</nativesTargetDir>
             <separateDirs>false</separateDirs>
         </configuration>
        </plugin>
