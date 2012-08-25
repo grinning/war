@@ -23,10 +23,6 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
-        <repository>
-            <id>spout-repo</id>
-            <url>http://nexus.spout.org/content/groups/public/</url>
-         </repository>
 		<repository>
 			<id>spout-repo</id>
 			<url>http://nexus.getspout.org/content/groups/public/</url>
@@ -76,13 +72,16 @@
         <version>0.0.5</version>
         <executions>
                 <execution>
-                        <id>unpacknatives</id>
-                        <phase>generate-resources</phase>
-                        <goals>
+                    <id>unpacknatives</id>
+                    <goals>
                         <goal>copy</goal>
-                        </goals>
+                     </goals>
                 </execution>
         </executions>
+        <configuration>
+            <nativesTargetDir>/src/main/resources</nativesTargetDir>
+            <separateDirs>false</separateDirs>
+        </configuration>
        </plugin>
 		
         </plugins>
