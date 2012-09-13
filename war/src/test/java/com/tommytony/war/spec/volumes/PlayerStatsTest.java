@@ -4,7 +4,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import org.jbenchx.annotations.Bench;
 
 import com.tommytony.war.utility.PlayerStat;
 
@@ -26,7 +25,6 @@ public class PlayerStatsTest {
 		assertEquals(combine, 5);
 	}
 	
-	@Bench
 	public void testBench() {
 		stat = mock(PlayerStat.class);
 		when(stat.getDeaths()).thenReturn(20);

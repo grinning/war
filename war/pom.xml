@@ -24,7 +24,7 @@
         </repository>
 		<repository>
 			<id>spout-repo</id>
-			<url>http://repo.spout.org/content/groups/public/</url>
+			<url>http://nexus.spout.org/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>repobo-snap</id>
@@ -56,7 +56,7 @@
        <plugin>
         <groupId>com.googlecode.mavennatives</groupId>
         <artifactId>maven-nativedependencies-plugin</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.6</version>
         <executions>
                 <execution>
                     <id>unpacknatives</id>
@@ -101,12 +101,6 @@
           <artifactId>javolution</artifactId>
           <version>5.3.1</version>
       </dependency> 
-      <dependency>
-          <groupId>org.getspout</groupId>
-          <artifactId>spoutpluginapi</artifactId>
-          <version>dev-SNAPSHOT</version>
-          <scope>compile</scope>
-      </dependency> 
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
@@ -116,6 +110,7 @@
 			<groupId>org.lwjgl.lwjgl</groupId>
 			<artifactId>lwjgl</artifactId>
 			<version>${lwjgl.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.getspout</groupId>
