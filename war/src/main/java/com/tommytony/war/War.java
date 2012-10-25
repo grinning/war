@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -130,16 +131,23 @@ public class War extends JavaPlugin {
 	private final WarzoneConfigBag warzoneDefaultConfig = new WarzoneConfigBag();
 	private final TeamConfigBag teamDefaultConfig = new TeamConfigBag();
 	private SpoutDisplayer spoutMessenger = null;
+	public static final File logFile;
+	public final PrintStream logOut;
 	
 	private OpenCLUtil cl;
 	
 	//Runtime Info
 	public static boolean java7;
 	
-	public War() {
+	static {
+		logFile = new File("plugins" + File.separatorChar + "war"+ File.separatorChar + "log" + File.separatorChar + "warlog.log");
+	}
+	
+	public War() throws FileNotFoundException {
 		super();
 		War.war = this;
 		warhub.enqueue();
+		this.logOut = new PrintStream(War.logFile);
 	}
 
 	/**
@@ -205,6 +213,7 @@ public class War extends JavaPlugin {
 		warConfig.put(WarConfig.MAXZONES, 12);
 		warConfig.put(WarConfig.PVPINZONESONLY, false);
 		warConfig.put(WarConfig.TNTINZONESONLY, false);
+		warConfig.put(WarConfig.LOGIMPORTANTCOMMANDS, true);
 		
 		warzoneDefaultConfig.put(WarzoneConfig.AUTOASSIGN, false);
 		warzoneDefaultConfig.put(WarzoneConfig.BLOCKHEADS, true);
@@ -311,6 +320,15 @@ public class War extends JavaPlugin {
 		char sep = File.separatorChar;
 		File statsDir = new File("plugins" + sep + "war" + sep + "stats");
 		statsDir.mkdir();
+		
+		//Make WarLogFile
+		File logFile = new File("plugins" + sep + "war"+ sep + "log" + sep + "warlog.log");
+		try {
+			logFile.createNewFile();
+		} catch (IOException e) {
+			this.log("ERROR> IOError, Check to make sure your java is configured correctly", Level.SEVERE);
+			e.printStackTrace();
+		}
 		
 		//Get Runtime Information
 		

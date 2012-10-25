@@ -7,7 +7,8 @@ public enum WarConfig {
 	DISABLEPVPMESSAGE (Boolean.class),
 	MAXZONES (Integer.class),
 	PVPINZONESONLY (Boolean.class),
-	TNTINZONESONLY (Boolean.class);
+	TNTINZONESONLY (Boolean.class),
+	LOGIMPORTANTCOMMANDS (Boolean.class);
 	
 	private final Class<?> configType;
 
