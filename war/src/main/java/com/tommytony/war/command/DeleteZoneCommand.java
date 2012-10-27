@@ -105,7 +105,7 @@ public class DeleteZoneCommand extends AbstractZoneMakerCommand {
 		StringBuilder s = new StringBuilder();
 		s.append('[').append(dateFormat.format(new Date())).append("] Event=DeletedZone Player=")
 		.append(player).append(" Zone=").append(zone).append(" DeleteString=").append(build);
-		War.war.logOut.println(s.toString() );
+		War.war.logOut.println(s.toString());
 	}
 	
 }
