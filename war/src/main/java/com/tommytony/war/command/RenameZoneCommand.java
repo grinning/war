@@ -12,6 +12,8 @@ import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
 import com.tommytony.war.structure.ZoneLobby;
+import java.sql.SQLException;
+import java.util.logging.Logger;
 
 public class RenameZoneCommand extends AbstractZoneMakerCommand {
 	public RenameZoneCommand(WarCommandHandler handler, CommandSender sender, String[] args) throws NotZoneMakerException {
@@ -79,9 +81,18 @@ public class RenameZoneCommand extends AbstractZoneMakerCommand {
 		War.war.log("Loading zone " + newName + "...", Level.INFO);
 		Warzone newZone = WarzoneYmlMapper.load(newName, false);
 		War.war.getWarzones().add(newZone);
-		newZone.getVolume().loadCorners();
-		
-		zone.getVolume().loadCorners();
+		try {
+			newZone.getVolume().loadCorners();
+		} catch (SQLException ex) {
+			War.war.log("Failed to load warzone " + newZone.getName() + ": " + ex.getMessage(), Level.WARNING);
+			throw new RuntimeException(ex);
+		}
+		try {
+			zone.getVolume().loadCorners();
+		} catch (SQLException ex) {
+			War.war.log("Failed to load warzone " + zone.getName() + ": " + ex.getMessage(), Level.WARNING);
+			throw new RuntimeException(ex);
+		}
 		if (zone.getLobby() != null) {
 			zone.getLobby().getVolume().resetBlocks();
 		}

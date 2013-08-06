@@ -9,6 +9,8 @@ import com.tommytony.war.config.WarzoneConfig;
 import com.tommytony.war.mapper.WarYmlMapper;
 import com.tommytony.war.mapper.WarzoneTxtMapper;
 import com.tommytony.war.mapper.WarzoneYmlMapper;
+import java.sql.SQLException;
+import java.util.logging.Logger;
 
 public class RestoreWarzonesJob implements Runnable {
 
@@ -32,7 +34,12 @@ public class RestoreWarzonesJob implements Runnable {
 				Warzone zone = WarzoneTxtMapper.load(warzoneName, !this.newWarInstall);
 				if (zone != null) { // could have failed, would've been logged already
 					War.war.getWarzones().add(zone);
-					zone.getVolume().loadCorners();
+					try {
+						zone.getVolume().loadCorners();
+					} catch (SQLException ex) {
+						War.war.log("Failed to load warzone " + warzoneName + ": " + ex.getMessage(), Level.WARNING);
+						throw new RuntimeException(ex);
+					}
 					
 					if (zone.getLobby() != null) {
 						zone.getLobby().getVolume().resetBlocks();

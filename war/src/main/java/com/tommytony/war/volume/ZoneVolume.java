@@ -35,7 +35,8 @@ public class ZoneVolume extends Volume {
 		try {
 			saved = ZoneVolumeMapper.save(this, this.zone.getName());
 		} catch (SQLException ex) {
-			War.war.log(ex.getMessage(), Level.SEVERE);
+			War.war.log("Failed to save warzone " + zone.getName() + ": " + ex.getMessage(), Level.WARNING);
+			ex.printStackTrace();
 		}
 		War.war.log("Saved " + saved + " blocks in warzone " + this.zone.getName() + ".", java.util.logging.Level.INFO);
 		this.isSaved = true;
@@ -59,7 +60,8 @@ public class ZoneVolume extends Volume {
 		try {
 			reset = ZoneVolumeMapper.load(this, this.zone.getName(), this.getWorld(), false);
 		} catch (SQLException ex) {
-			War.war.log(ex.getMessage(), Level.SEVERE);
+			War.war.log("Failed to load warzone " + zone.getName() + ": " + ex.getMessage(), Level.WARNING);
+			ex.printStackTrace();
 		}
 		War.war.log("Reset " + reset + " blocks in warzone " + this.zone.getName() + ".", java.util.logging.Level.INFO);
 		this.isSaved = true;
