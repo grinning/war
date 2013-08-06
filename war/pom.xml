@@ -39,6 +39,9 @@
   	<url>http://ci.tommytony.com</url>
   </ciManagement>
   <scm>
+        <connection>scm:git:git://github.com/taoneill/war.git</connection>
+	<developerConnection>scm:git:git@github.com:taoneill/war.git</developerConnection>
+	<tag>HEAD</tag>
   	<url>https://github.com/taoneill/war</url>
   </scm>
   <build>
@@ -55,12 +58,8 @@
       </plugins>
       <resources>
         <resource>
-          <targetPath>.</targetPath>
           <filtering>true</filtering>
           <directory>${basedir}/src/main/resources/</directory>
-          <includes>
-            <include>plugin.yml</include>
-          </includes>
         </resource>    
       </resources>
   </build>
@@ -81,7 +80,7 @@
     <dependency>
     	<groupId>org.bukkit</groupId>
     	<artifactId>bukkit</artifactId>
-    	<version>1.6.1-R0.1-SNAPSHOT</version>
+	<version>1.6.2-R0.1</version>
     </dependency>
     <dependency>
 	<groupId>org.kitteh</groupId>

@@ -1,5 +1,6 @@
 package com.tommytony.war.volume;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -7,8 +8,9 @@ import org.bukkit.block.Block;
 /**
  *
  * @author tommytony
- *
+ * @deprecated see BlockState
  */
+@Deprecated
 public class BlockInfo {
 	private int x;
 	private int y;
@@ -107,4 +109,12 @@ public class BlockInfo {
 	// }
 	// return null;
 	// }
+	/**
+	 * Get the location of the referenced block.
+	 * @param world World this block is in. Don't ask me why this wasn't saved.
+	 * @return location of this block.
+	 */
+	public Location getLocation(final World world) {
+		return new Location(world, x, y, z);
+	}
 }

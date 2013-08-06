@@ -9,6 +9,9 @@ import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
 import com.tommytony.war.mapper.ZoneVolumeMapper;
 import com.tommytony.war.structure.Monument;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,7 +31,12 @@ public class ZoneVolume extends Volume {
 	@Override
 	public int saveBlocks() {
 		// Save blocks directly to disk (i.e. don't put everything in memory)
-		int saved = ZoneVolumeMapper.save(this, this.zone.getName());
+		int saved = 0;
+		try {
+			saved = ZoneVolumeMapper.save(this, this.zone.getName());
+		} catch (SQLException ex) {
+			War.war.log(ex.getMessage(), Level.SEVERE);
+		}
 		War.war.log("Saved " + saved + " blocks in warzone " + this.zone.getName() + ".", java.util.logging.Level.INFO);
 		this.isSaved = true;
 		return saved;
@@ -39,7 +47,7 @@ public class ZoneVolume extends Volume {
 		return this.isSaved;
 	}
 
-	public void loadCorners() {
+	public void loadCorners() throws SQLException {
 		ZoneVolumeMapper.load(this, this.zone.getName(), this.getWorld(), true);
 		this.isSaved = true;
 	}
@@ -47,7 +55,12 @@ public class ZoneVolume extends Volume {
 	@Override
 	public int resetBlocks() {
 		// Load blocks directly from disk and onto the map (i.e. no more in-memory warzone blocks)
-		int reset = ZoneVolumeMapper.load(this, this.zone.getName(), this.getWorld(), false);
+		int reset = 0;
+		try {
+			reset = ZoneVolumeMapper.load(this, this.zone.getName(), this.getWorld(), false);
+		} catch (SQLException ex) {
+			War.war.log(ex.getMessage(), Level.SEVERE);
+		}
 		War.war.log("Reset " + reset + " blocks in warzone " + this.zone.getName() + ".", java.util.logging.Level.INFO);
 		this.isSaved = true;
 		return reset;
