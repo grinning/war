@@ -22,7 +22,7 @@ public abstract class PlayerStatsDatabaseMapper implements PlayerStatsMapper {
 	
 	protected abstract Connection getConnection();
 	
-	public void init() {
+	public final void init() {
 		try {
 		    Connection c = this.getConnection();
 		    Statement s = c.createStatement();
@@ -50,11 +50,11 @@ public abstract class PlayerStatsDatabaseMapper implements PlayerStatsMapper {
 		}
 	}
 	
-    public void close() {
+    public final void close() {
 		
 	}
     
-    public int load(String player, int stat) {
+    public final int load(String player, int stat) {
 		Connection c = this.getConnection();
 		PreparedStatement ps = null;
 		int ret = 0;
@@ -92,7 +92,7 @@ public abstract class PlayerStatsDatabaseMapper implements PlayerStatsMapper {
 		return ret;
 	}
     
-    public int[] load(String p) {
+    public final int[] load(String p) {
     	int[] ret = new int[4];
     	try {
 		    Connection c = this.getConnection();
@@ -117,7 +117,7 @@ public abstract class PlayerStatsDatabaseMapper implements PlayerStatsMapper {
 		return ret;
 	}
     
-	public void save(String player, int stat, int data) {
+	public final void save(String player, int stat, int data) {
 		try {
 			Connection c = this.getConnection();
 			PreparedStatement ps = null;
@@ -150,11 +150,11 @@ public abstract class PlayerStatsDatabaseMapper implements PlayerStatsMapper {
 		}
 	}
 	
-	public void save(String player, int[] stats) {
+	public final void save(String player, int[] stats) {
 		this.save(player, stats, false);
 	}
 	
-	public void save(String player, int[] stats, boolean makeNewPlayer) {
+	public final void save(String player, int[] stats, boolean makeNewPlayer) {
 		try {
 			Connection c = this.getConnection();
 			PreparedStatement ps = null;
@@ -187,7 +187,7 @@ public abstract class PlayerStatsDatabaseMapper implements PlayerStatsMapper {
 		}
 	}
 	
-	private int determineResult(ResultSet set, String p) {
+	private final int determineResult(ResultSet set, String p) {
 		try {
 		    if(set.next()) {
 			    set.getInt("kills");
@@ -203,9 +203,9 @@ public abstract class PlayerStatsDatabaseMapper implements PlayerStatsMapper {
 		return -1;
 	}
 	
-	protected String parseDatabaseName(String configFileString) {
+	protected final String parseDatabaseName(String configFileString) {
 		if(configFileString.startsWith("$WAR")) {
-			return War.war.getDataFolder().getAbsolutePath() + configFileString.substring(4, configFileString.length()); //@War means the War data folder
+			return War.war.getDataFolder().getAbsolutePath() + configFileString.substring(4, configFileString.length()); //$War means the War data folder
 		} else {
 			return configFileString;  //if we have no @WAR then we assume they entered the correct path to the database
 		}

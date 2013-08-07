@@ -28,6 +28,16 @@ import com.tommytony.war.utility.Direction;
  *
  */
 public class Volume {
+	private static final Material[] toAirMaterials = {
+		Material.SIGN_POST, Material.WALL_SIGN, Material.IRON_DOOR,
+		Material.WOOD_DOOR, Material.LADDER, Material.YELLOW_FLOWER,
+		Material.RED_ROSE, Material.RED_MUSHROOM, Material.BROWN_MUSHROOM,
+		Material.SAPLING, Material.TORCH, Material.RAILS,
+		Material.STONE_BUTTON, Material.STONE_PLATE, Material.WOOD_PLATE,
+		Material.LEVER, Material.REDSTONE, Material.REDSTONE_TORCH_ON,
+		Material.REDSTONE_TORCH_OFF, Material.CACTUS, Material.SNOW,
+		Material.ICE
+	};
 	private String name;
 	private World world;
 	private BlockInfo cornerOne;
@@ -42,19 +52,19 @@ public class Volume {
 		this.world = world;
 	}
 	
-	public void setName(String newName) {
+	public final void setName(String newName) {
 		this.name = newName;
 	}
 
-	public World getWorld() {
+	public final World getWorld() {
 		return this.world;
 	}
 	
-	public void setWorld(World world) {
+	public final void setWorld(World world) {
 		this.world = world;
 	}
 
-	public boolean hasTwoCorners() {
+	public final boolean hasTwoCorners() {
 		return this.cornerOne != null && this.cornerTwo != null;
 	}
 
@@ -62,7 +72,7 @@ public class Volume {
 		this.cornerOne = new BlockInfo(block);
 	}
 
-	public void setCornerOne(BlockInfo blockInfo) {
+	public final void setCornerOne(BlockInfo blockInfo) {
 		this.cornerOne = blockInfo;
 	}
 
@@ -143,7 +153,7 @@ public class Volume {
 		return noOfSavedBlocks;
 	}
 
-	public void resetBlocksAsJob() {
+	public final void resetBlocksAsJob() {
 		BlockResetJob job = new BlockResetJob(this);
 		War.war.getServer().getScheduler().scheduleSyncDelayedTask(War.war, job);
 	}
@@ -293,8 +303,7 @@ public class Volume {
 		return noOfResetBlocks;
 	}
 
-	public byte[][][] getBlockDatas() {
-		// TODO Auto-generated method stub
+	public final byte[][][] getBlockDatas() {
 		return this.blockDatas;
 	}
 
@@ -306,85 +315,85 @@ public class Volume {
 		this.cornerTwo = new BlockInfo(block);
 	}
 
-	public void setCornerTwo(BlockInfo blockInfo) {
+	public final void setCornerTwo(BlockInfo blockInfo) {
 		this.cornerTwo = blockInfo;
 	}
 
-	public BlockInfo getMinXBlock() {
+	public final BlockInfo getMinXBlock() {
 		if (this.cornerOne.getX() < this.cornerTwo.getX()) {
 			return this.cornerOne;
 		}
 		return this.cornerTwo;
 	}
 
-	public BlockInfo getMinYBlock() {
+	public final BlockInfo getMinYBlock() {
 		if (this.cornerOne.getY() < this.cornerTwo.getY()) {
 			return this.cornerOne;
 		}
 		return this.cornerTwo;
 	}
 
-	public BlockInfo getMinZBlock() {
+	public final BlockInfo getMinZBlock() {
 		if (this.cornerOne.getZ() < this.cornerTwo.getZ()) {
 			return this.cornerOne;
 		}
 		return this.cornerTwo;
 	}
 
-	public int getMinX() {
+	public final int getMinX() {
 		return this.getMinXBlock().getX();
 	}
 
-	public int getMinY() {
+	public final int getMinY() {
 		return this.getMinYBlock().getY();
 	}
 
-	public int getMinZ() {
+	public final int getMinZ() {
 		return this.getMinZBlock().getZ();
 	}
 
-	public BlockInfo getMaxXBlock() {
+	public final BlockInfo getMaxXBlock() {
 		if (this.cornerOne.getX() < this.cornerTwo.getX()) {
 			return this.cornerTwo;
 		}
 		return this.cornerOne;
 	}
 
-	public BlockInfo getMaxYBlock() {
+	public final BlockInfo getMaxYBlock() {
 		if (this.cornerOne.getY() < this.cornerTwo.getY()) {
 			return this.cornerTwo;
 		}
 		return this.cornerOne;
 	}
 
-	public BlockInfo getMaxZBlock() {
+	public final BlockInfo getMaxZBlock() {
 		if (this.cornerOne.getZ() < this.cornerTwo.getZ()) {
 			return this.cornerTwo;
 		}
 		return this.cornerOne;
 	}
 
-	public int getMaxX() {
+	public final int getMaxX() {
 		return this.getMaxXBlock().getX();
 	}
 
-	public int getMaxY() {
+	public final int getMaxY() {
 		return this.getMaxYBlock().getY();
 	}
 
-	public int getMaxZ() {
+	public final int getMaxZ() {
 		return this.getMaxZBlock().getZ();
 	}
 
-	public int getSizeX() {
+	public final int getSizeX() {
 		return this.getMaxX() - this.getMinX() + 1;
 	}
 
-	public int getSizeY() {
+	public final int getSizeY() {
 		return this.getMaxY() - this.getMinY() + 1;
 	}
 
-	public int getSizeZ() {
+	public final int getSizeZ() {
 		return this.getMaxZ() - this.getMinZ() + 1;
 	}
 
@@ -392,26 +401,26 @@ public class Volume {
 		return this.getBlockTypes() != null;
 	}
 
-	public int[][][] getBlockTypes() {
+	public final int[][][] getBlockTypes() {
 		return this.blockTypes;
 	}
 
-	public BlockInfo getCornerOne() {
+	public final BlockInfo getCornerOne() {
 		return this.cornerOne;
 	}
 
-	public BlockInfo getCornerTwo() {
+	public final BlockInfo getCornerTwo() {
 		return this.cornerTwo;
 	}
 
-	public boolean contains(Location location) {
+	public final boolean contains(Location location) {
 		int x = location.getBlockX();
 		int y = location.getBlockY();
 		int z = location.getBlockZ();
 		return this.hasTwoCorners() && location.getWorld().getName().equals(this.world.getName()) && x <= this.getMaxX() && x >= this.getMinX() && y <= this.getMaxY() && y >= this.getMinY() && z <= this.getMaxZ() && z >= this.getMinZ();
 	}
 
-	public boolean contains(Block block) {
+	public final boolean contains(Block block) {
 		int x = block.getX();
 		int y = block.getY();
 		int z = block.getZ();
@@ -422,11 +431,11 @@ public class Volume {
 		this.blockTypes = blockTypes;
 	}
 
-	public String getName() {
+	public final String getName() {
 		return this.name;
 	}
 
-	public void setToMaterial(Material material) {
+	public final void setToMaterial(Material material) {
 		try {
 			if (this.hasTwoCorners()) {
 				int x = this.getMinX();
@@ -449,7 +458,7 @@ public class Volume {
 		}
 	}
 
-	public void setFaceMaterial(BlockFace face, Material material, byte data) {
+	public final void setFaceMaterial(BlockFace face, Material material, byte data) {
 		try {
 			if (this.hasTwoCorners() && this.isSaved()) {
 				int x = this.getMinX();
@@ -475,7 +484,7 @@ public class Volume {
 		}
 	}
 	
-	public void setFloorOutlineMaterial(Material outline, byte outlineData) {
+	public final void setFloorOutlineMaterial(Material outline, byte outlineData) {
 		try {
 			if (this.hasTwoCorners() && this.isSaved()) {
 				int x = this.getMinX();
@@ -497,7 +506,7 @@ public class Volume {
 		}
 	}
 
-	private void switchMaterials(Material[] oldTypes, Material newType) {
+	private final void switchMaterials(Material[] oldTypes, Material newType) {
 		try {
 			int i = 0, j = 0, k = 0;
 			int x, y, z;
@@ -531,47 +540,24 @@ public class Volume {
 			War.war.log("Failed to switch block to " + newType + "in volume " + this.name + "." + e.getClass().toString() + " " + e.getMessage(), Level.WARNING);
 		}
 	}
-
-	public void clearBlocksThatDontFloat() {
-		Material[] toAirMaterials = new Material[22];
-		toAirMaterials[0] = Material.SIGN_POST;
-		toAirMaterials[1] = Material.WALL_SIGN;
-		toAirMaterials[2] = Material.IRON_DOOR;
-		toAirMaterials[3] = Material.WOOD_DOOR;
-		toAirMaterials[4] = Material.LADDER;
-		toAirMaterials[5] = Material.YELLOW_FLOWER;
-		toAirMaterials[6] = Material.RED_ROSE;
-		toAirMaterials[7] = Material.RED_MUSHROOM;
-		toAirMaterials[8] = Material.BROWN_MUSHROOM;
-		toAirMaterials[9] = Material.SAPLING;
-		toAirMaterials[10] = Material.TORCH;
-		toAirMaterials[11] = Material.RAILS;
-		toAirMaterials[12] = Material.STONE_BUTTON;
-		toAirMaterials[13] = Material.STONE_PLATE;
-		toAirMaterials[14] = Material.WOOD_PLATE;
-		toAirMaterials[15] = Material.LEVER;
-		toAirMaterials[16] = Material.REDSTONE;
-		toAirMaterials[17] = Material.REDSTONE_TORCH_ON;
-		toAirMaterials[18] = Material.REDSTONE_TORCH_OFF;
-		toAirMaterials[19] = Material.CACTUS;
-		toAirMaterials[20] = Material.SNOW;
-		toAirMaterials[21] = Material.ICE;
-		this.switchMaterials(toAirMaterials, Material.AIR);
+	
+	public final void clearBlocksThatDontFloat() {
+		this.switchMaterials(Volume.toAirMaterials, Material.AIR);
 	}
 
-	public void setSignLines(HashMap<String, String[]> signLines) {
+	public final void setSignLines(HashMap<String, String[]> signLines) {
 		this.signLines = signLines;
 	}
 
-	public HashMap<String, String[]> getSignLines() {
+	public final HashMap<String, String[]> getSignLines() {
 		return this.signLines;
 	}
 
-	public void setInvBlockContents(HashMap<String, List<ItemStack>> invBlockContents) {
+	public final void setInvBlockContents(HashMap<String, List<ItemStack>> invBlockContents) {
 		this.invBlockContents = invBlockContents;
 	}
 
-	public HashMap<String, List<ItemStack>> getInvBlockContents() {
+	public final HashMap<String, List<ItemStack>> getInvBlockContents() {
 		return this.invBlockContents;
 	}
 

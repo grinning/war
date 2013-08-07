@@ -3,6 +3,7 @@ package com.tommytony.war;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -95,30 +96,27 @@ public class War extends JavaPlugin {
 	private final List<String> zoneMakersImpersonatingPlayers = new ArrayList<String>();
 	private HashMap<String, PlayerState> disconnected = new HashMap<String, PlayerState>();
 	private final HashMap<String, String> wandBearers = new HashMap<String, String>(); // playername to zonename
-
-	private final List<String> deadlyAdjectives = new ArrayList<String>() {{
-        clear();
-		add("");
-		add("");
-		add("mighty ");
-		add("deadly ");
-		add("fine ");
-		add("precise ");
-		add("brutal ");
-		add("powerful ");	
-	}};
 	
-	private final List<String> killerVerbs = new ArrayList<String>() {{
-		clear();
-		add("killed");
-		add("killed");
-		add("killed");
-		add("finished");
-		add("annihilated");
-		add("murdered");
-		add("obliterated");
-		add("exterminated");
-	}};
+	private final List<String> deadlyAdjectives = Arrays.asList(
+			"",
+			"",
+			"mighty ",
+			"deadly ",
+			"fine ",
+			"precise",
+			"brutal ",
+			"powerful ");
+	
+	private final List<String> killerVerbs = Arrays.asList(
+			"killed",
+			"killed",
+			"killed",
+			"finished",
+			"annihilated",
+			"murdered",
+			"obliterated",
+			"exterminated"
+			);
 
 	private final InventoryBag defaultInventories = new InventoryBag();
 

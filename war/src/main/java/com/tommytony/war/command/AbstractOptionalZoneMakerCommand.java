@@ -23,7 +23,7 @@ public abstract class AbstractOptionalZoneMakerCommand extends AbstractWarComman
 		}
 	}
 	
-	public boolean isSenderZoneMaker() {
+	public final boolean isSenderZoneMaker() {
 		if (this.getSender() instanceof Player) {
 			// for players check War.isZoneMaker()
 			if (!War.war.isZoneMaker((Player) this.getSender())) {
@@ -39,7 +39,7 @@ public abstract class AbstractOptionalZoneMakerCommand extends AbstractWarComman
 		}
 	}
 	
-	public boolean isSenderAuthorOfZone(Warzone zone) {
+	public final boolean isSenderAuthorOfZone(Warzone zone) {
 		if (this.getSender() instanceof Player) {
 			if (War.war.isWarAdmin((Player) this.getSender())) {
 				// War admin has rights over all warzones
