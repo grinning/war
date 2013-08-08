@@ -1,12 +1,16 @@
 package com.tommytony.war.structure;
 
+import java.util.logging.Level;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import com.tommytony.war.Team;
+import com.tommytony.war.War;
 import com.tommytony.war.Warzone;
+import com.tommytony.war.mapper.StructureVolumeMapper;
 import com.tommytony.war.utility.Direction;
 import com.tommytony.war.volume.BlockInfo;
 import com.tommytony.war.volume.Volume;
@@ -23,12 +27,14 @@ public class Monument {
 	private Team ownerTeam = null;
 	private final String name;
 	private Warzone warzone;
+	private String type;
 
 	public Monument(String name, Warzone warzone, Location location) {
 		this.name = name;
 		this.location = location;
 		this.warzone = warzone;
 		this.volume = new Volume(name, warzone.getWorld());
+		this.type = "default";
 		this.setLocation(location);
 	}
 
@@ -173,7 +179,8 @@ public class Monument {
 		current = this.warzone.getWorld().getBlockAt(x, y + 2, z + 1);
 		current.setType(main);
 		current.setData(mainData);
-
+		
+		this.volume.saveBlocks();
 	}
 
 	public boolean isNear(Location playerLocation) {
@@ -225,13 +232,19 @@ public class Monument {
 	}
 
 	public void setLocation(Location location) {
+		StructureVolumeMapper.StructureReturnType ret = StructureVolumeMapper.load(this.volume, this.type, StructureType.MONUMENT);
+		if(ret.vec == null) {
+			War.war.log("Unspecified special point in special file", Level.WARNING);
+		}
 		Block locationBlock = this.warzone.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-		this.volume.setCornerOne(locationBlock.getRelative(BlockFace.DOWN).getRelative(Direction.EAST(), 2).getRelative(Direction.SOUTH(), 2));
-		this.volume.setCornerTwo(locationBlock.getRelative(BlockFace.UP, 2).getRelative(Direction.WEST(), 2).getRelative(Direction.NORTH(), 2));
+		this.volume.setCornerOne(locationBlock.getRelative((int)-ret.vec.getX(), (int)-ret.vec.getY(), (int)-ret.vec.getZ()));
+		this.volume.setCornerTwo(locationBlock.getRelative((int) ret.vec.getX(), (int) ret.vec.getY(), (int) ret.vec.getZ()));
+		//this.volume.setCornerOne(locationBlock.getRelative(BlockFace.DOWN).getRelative(Direction.EAST(), 2).getRelative(Direction.SOUTH(), 2));
+		//this.volume.setCornerTwo(locationBlock.getRelative(BlockFace.UP, 2).getRelative(Direction.WEST(), 2).getRelative(Direction.NORTH(), 2));
 		this.volume.saveBlocks();
 		this.location = location;
-		
-		this.addMonumentBlocks();
+		this.volume.resetBlocks();
+		//this.addMonumentBlocks();
 	}
 
 	public Volume getVolume() {

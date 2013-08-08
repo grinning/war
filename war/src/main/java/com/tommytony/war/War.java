@@ -1,7 +1,10 @@
 package com.tommytony.war;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -284,6 +287,12 @@ public class War extends JavaPlugin {
 		    this.warLogger.addHandler(handler);
 		} catch (IOException e) {
 			this.getLogger().log(Level.WARNING, "Failed to create War log file");
+		}
+		
+		try {
+		    this.initStructureFiles();
+		} catch(IOException e) {
+			this.log("Failed to initialize structure files", Level.WARNING);
 		}
 		
 		// Size check
@@ -1233,5 +1242,31 @@ public class War extends JavaPlugin {
 
 	public boolean isTagServer() {
 		return tagServer;
+	}
+	
+	public void initStructureFiles() throws IOException {
+			//directories
+			(new File(this.getDataFolder() + "/dat/structure/monument")).mkdirs();
+			(new File(this.getDataFolder() + "/dat/structure/flag")).mkdirs();
+			(new File(this.getDataFolder() + "/dat/structure/cake")).mkdirs();
+			(new File(this.getDataFolder() + "/dat/structure/bomb")).mkdirs();
+			//files
+			File defMonument = new File(this.getDataFolder() + "/dat/structure/monument/default.json");
+			if(!defMonument.exists()) {
+				defMonument.createNewFile();
+				InputStream s = War.class.getResourceAsStream("/structures/monument/default.json");
+				FileOutputStream out = new FileOutputStream(defMonument);
+				int r = 0;
+				while((r = s.read()) != -1) {
+					out.write(r);
+				}
+				out.close();
+				s.close();
+				if(s == null) {
+					this.log("Resource is null", Level.WARNING);
+				} else {
+					this.log("Resource is not null", Level.INFO);
+				}
+			}
 	}
 }

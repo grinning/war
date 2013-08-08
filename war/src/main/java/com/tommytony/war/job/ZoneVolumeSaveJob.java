@@ -18,7 +18,6 @@ public class ZoneVolumeSaveJob extends BukkitRunnable {
 		this.zoneName = zoneName;
 	}
 
-	@Override
 	public void run() {
 		try {
 			ZoneVolumeMapper.save(this.volume, this.zoneName);

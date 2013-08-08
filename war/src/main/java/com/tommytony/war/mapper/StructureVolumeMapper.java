@@ -7,7 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
+import com.google.common.primitives.Ints;
 import com.tommytony.war.War;
 import com.tommytony.war.structure.StructureType;
 import com.tommytony.war.volume.Volume;
@@ -31,8 +33,11 @@ public class StructureVolumeMapper {
 		BufferedReader in = null;
 		Object o = null;
 		try {
-			(new File(War.war.getDataFolder().getPath() + "/dat/structure/" + type.getString())).mkdir();
+			(new File(War.war.getDataFolder().getPath() + "/dat/structure/" + type.getString())).mkdirs();
 			in = new BufferedReader(new FileReader(new File(War.war.getDataFolder().getPath() + "/dat/structure/" + type.getString() + "/" + name + ".json")));
+			if(in == null) {
+				War.war.log("FILE IS NULL", Level.SEVERE);
+			}
 			o = JSONValue.parse(in);
 			in.close();
 		} catch(IOException e) {
@@ -41,9 +46,9 @@ public class StructureVolumeMapper {
 		}
 		JSONObject obj = (JSONObject) o;
 		volume.setName((String) obj.get("name"));
-		int xSize = (Integer) obj.get("xSize");
-		int ySize = (Integer) obj.get("ySize");
-		int zSize = (Integer) obj.get("zSize");
+		int xSize =  Ints.checkedCast(((Long) obj.get("xSize")));
+		int ySize =  Ints.checkedCast(((Long) obj.get("ySize")));
+		int zSize =  Ints.checkedCast(((Long) obj.get("zSize")));
 		Vector specOffset = null;
 		int[][][] types = new int[xSize][ySize][zSize];
 		byte[][][] datas = new byte[xSize][ySize][zSize];
@@ -53,8 +58,8 @@ public class StructureVolumeMapper {
 		for(int x = 0; x < xSize; x++) {
 			for(int y = 0; y < ySize; y++) {
 				for(int z = 0; z < zSize; z++) {
-					loopType = (Integer) blocktype.get((x * ySize * zSize) + (y * zSize) + (z));
-					loopData = (Byte) blockdata.get((x * ySize * zSize) + (y * zSize) + (z));
+					loopType = Ints.checkedCast(((Long) blocktype.get((x * ySize * zSize) + (y * zSize) + (z))));
+					loopData = (byte) (((Long) blockdata.get((x * ySize * zSize) + (y * zSize) + (z))) & 0xff);
 					//special location checking
 					if(loopType == 0 && loopData == Byte.MAX_VALUE) {
 						//SPECIAL LOCATION :D
@@ -70,7 +75,7 @@ public class StructureVolumeMapper {
 		return new StructureVolumeMapper.StructureReturnType(count, specOffset);
 	}
 	
-	static protected class StructureReturnType {
+	static public class StructureReturnType {
 		public final int count;
 		public final Vector vec;
 		
@@ -80,7 +85,7 @@ public class StructureVolumeMapper {
 		}
 	}
 	
-	public static int save(Volume volume, String name, StructureType type, String specLoc) {
+	public static int save(Volume volume, String name, StructureType type) {
 		int count = 0;
 		JSONObject obj = new JSONObject();
 		obj.put("name", name);
@@ -102,7 +107,8 @@ public class StructureVolumeMapper {
 		obj.put("blockdata", datas);
 		BufferedWriter out = null;
 		try {
-			(new File(War.war.getDataFolder().getPath() + "/dat/structure/" + type.getString())).mkdir();
+			(new File(War.war.getDataFolder().getPath() + "/dat/structure/" + type.getString())).mkdirs();
+			(new File(War.war.getDataFolder().getPath() + "/dat/structure/" + type.getString())).createNewFile();
 			out = new BufferedWriter(new FileWriter(new File(War.war.getDataFolder().getPath() + "/dat/structure/" + type.getString() + "/" + name + ".json")));
 			out.write(obj.toJSONString());
 			out.flush();
