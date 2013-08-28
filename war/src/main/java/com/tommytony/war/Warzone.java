@@ -1,5 +1,10 @@
 package com.tommytony.war;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,13 +50,16 @@ import com.tommytony.war.structure.WarzoneMaterials;
 import com.tommytony.war.structure.ZoneLobby;
 import com.tommytony.war.structure.ZoneWallGuard;
 import com.tommytony.war.utility.Direction;
+import com.tommytony.war.utility.HttpUtility;
 import com.tommytony.war.utility.LoadoutSelection;
 import com.tommytony.war.utility.PlayerStatTracker;
 import com.tommytony.war.utility.PlayerState;
 import com.tommytony.war.utility.PotionEffectHelper;
+import com.tommytony.war.utility.ZipUtility;
 import com.tommytony.war.volume.BlockInfo;
 import com.tommytony.war.volume.Volume;
 import com.tommytony.war.volume.ZoneVolume;
+
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -1613,6 +1621,66 @@ public class Warzone {
 	
 	public ScoreboardType getScoreboardType() {
 		return this.getWarzoneConfig().getScoreboardType(WarzoneConfig.SCOREBOARD);
+	}
+	
+	public static void uploadWarzoneAsTask(final Warzone warzone) {
+		War.war.getServer().getScheduler().runTaskAsynchronously(War.war, new Runnable() {
+			public void run() {
+				try {
+					Warzone.uploadWarzone(warzone);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+		});
+	}
+	
+	public static void uploadWarzone(Warzone warzone) throws Exception {
+		//check
+		File warzoneYML = new File(War.war.getDataFolder().getAbsolutePath() + File.separator + "warzone-" + warzone.getName() + ".yml");
+		if(!warzoneYML.exists()) {
+			War.war.log("Warzone upload error, No Warzone yml descriptor file for " + warzone.getName(), Level.SEVERE);
+			return;
+		}
+		File warzoneDatFolder = new File(War.war.getDataFolder().getAbsolutePath() + File.separator + "dat" + File.separator
+				+ "warzone-" + warzone.getName());
+		if(!warzoneDatFolder.exists()) {
+			War.war.log("Warzone upload error, warzone file system does not exist for " + warzone.getName(), Level.SEVERE);
+			return;
+		}
+		if(!warzoneDatFolder.isDirectory()) {
+			War.war.log("Warzone upload error" + warzone.getName(), Level.SEVERE);
+		}
+		//compress
+		ZipUtility warzoneYMLZip = new ZipUtility(War.war.getDataFolder().getAbsolutePath() + File.separator + "warzone-" + warzone.getName() + ".zip",
+				War.war.getDataFolder().getAbsolutePath() + File.separator + "warzone-" + warzone.getName() + ".yml");
+		warzoneYMLZip.zip();
+		ZipUtility warzoneDatZip = new ZipUtility(War.war.getDataFolder().getAbsolutePath() + File.separator + "dat" + File.separator + "warzone-" + warzone.getName(),
+				War.war.getDataFolder().getAbsolutePath() + File.separator + "warzone-" + warzone.getName() + ".zip");
+		warzoneDatZip.zip();
+		//upload
+		HttpUtility.post("http://warget.tommytony.us/upload_warzone_yml.php", 
+				new String[]{"warzone", "server", "data"}, new String[] {warzone.getName(), War.war.getServer().getName(),
+				Warzone.getDataFromFile(warzoneYMLZip.getArchivePath())});
+		HttpUtility.post("http://warget.tommytony.us/upload_warzone_datfolder.php",
+				new String[] {"warzone", "server", "data"}, new String[] {warzone.getName(), War.war.getServer().getName(),
+				Warzone.getDataFromFile(warzoneDatZip.getArchivePath())});
+		//clean up the trash
+		(new File(warzoneYMLZip.getArchivePath())).delete();
+		(new File(warzoneDatZip.getArchivePath())).delete();
+	}
+	
+	protected static String getDataFromFile(String path) throws IOException {
+		StringBuilder s = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new FileReader(path));
+		char[] strBuf = new char[1024];
+		int read = 0;
+		while((read = reader.read(strBuf)) != -1) {
+			s.append(String.valueOf(strBuf, 0, read));
+		}
+		reader.close();
+		return s.toString();
 	}
 }
 
